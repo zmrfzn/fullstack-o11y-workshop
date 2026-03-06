@@ -5,7 +5,12 @@ echo "============================================"
 echo " 🚀 Setting up PERN Workshop Environment"
 echo "============================================"
 
-# ---- 1. Install dependencies ----
+# ---- 1. Provision environment files ----
+echo "📋 Setting up environment files..."
+cp packages/backend/.env.example packages/backend/.env
+cp packages/frontend/.env.example packages/frontend/.env.local
+
+# ---- 2. Install dependencies ----
 echo "📦 Installing root dependencies..."
 npm install
 
@@ -15,14 +20,14 @@ npm run install:backend
 echo "📦 Installing frontend dependencies..."
 npm run install:frontend
 
-# ---- 2. Wait for PostgreSQL to be ready ----
+# ---- 3. Wait for PostgreSQL to be ready ----
 echo "⏳ Waiting for PostgreSQL..."
 until pg_isready -h localhost -p 5432 -U postgres > /dev/null 2>&1; do
   sleep 1
 done
 echo "✅ PostgreSQL is ready!"
 
-# ---- 3. Create a monitoring user for New Relic (pre-provision) ----
+# ---- 4. Create a monitoring user for New Relic (pre-provision) ----
 PGPASSWORD=root psql -h localhost -U postgres -d DevRel -c "
   DO \$\$
   BEGIN
@@ -35,7 +40,7 @@ PGPASSWORD=root psql -h localhost -U postgres -d DevRel -c "
   \$\$;
 " 2>/dev/null || true
 
-# ---- 4. Initialize database (migrations + seeds) ----
+# ---- 5. Initialize database (migrations + seeds) ----
 echo "🗄️  Initializing database..."
 cd packages/backend
 npx sequelize-cli db:migrate
