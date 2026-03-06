@@ -1,0 +1,455 @@
+# 🔭 Full Stack Observability Workshop with New Relic
+
+## Introduction
+
+Welcome to the **Full Stack Observability Workshop**! In this hands-on workshop, you'll instrument a PERN Stack application (PostgreSQL, Express, React, Node.js) with New Relic for end-to-end observability.
+
+### What you'll learn
+
+| # | Challenge | What you'll do |
+|---|-----------|---------------|
+| 1 | **APM** | Instrument a Node.js/Express API with Application Performance Monitoring |
+| 2 | **Infrastructure** | Install the New Relic Infrastructure agent to monitor the underlying host |
+| 3 | **Log Forwarding** | Configure custom log forwarding via the Infrastructure agent |
+| 4 | **Browser** | Instrument a React SPA with New Relic Browser for Real User Monitoring |
+| 5 | **Synthetics** | Set up proactive monitoring with Synthetic checks |
+
+### Prerequisites
+
+- A free [New Relic account](https://newrelic.com/signup)
+- A GitHub account with Codespaces access
+
+### Getting Started
+
+1. Open this repository in **GitHub Codespaces**:
+   - Click the green **`<> Code`** button → **Codespaces** tab → **Create codespace on main**
+2. Wait for the environment to finish building (2–3 minutes). The setup script will:
+   - Install all Node.js dependencies
+   - Initialize the PostgreSQL database with sample data
+   - Make the app ready to run
+3. When you see `✅ Workshop environment is ready!` in the terminal, you're good to go!
+
+> [!TIP]
+> You will need **two terminals** for most exercises. Use the **`+`** button in the VS Code terminal panel (or press `` Ctrl+Shift+` ``) to open additional terminals.
+
+---
+
+## Challenge 1 – Instrument Node.js with APM
+
+New Relic's Application Performance Monitoring (APM) tracks the performance of your applications and microservices. With APM, you can monitor web transaction times, throughput, and all dependencies. This challenge demonstrates how to instrument a Node.js Express API.
+
+### Verify Your Environment
+
+**Terminal 1** — Navigate to the backend and start the server:
+
+```bash
+cd packages/backend
+npm start
+```
+
+**Terminal 2** — Verify the API is responding:
+
+```bash
+curl http://localhost:8080/api/tutorials
+```
+
+You should see a JSON response with tutorial data. If everything looks good, stop the server in Terminal 1 with `Ctrl+C`.
+
+### Step 1 – Install the `newrelic` NPM package
+
+The `newrelic` package is already listed in `package.json`, but if it wasn't, you'd install it with:
+
+```bash
+npm install newrelic
+```
+
+### Step 2 – Configure `newrelic.js`
+
+Open the file `packages/backend/newrelic.js` in the VS Code editor.
+
+Update the following configuration values:
+
+- **`app_name`** — Give your application a unique name (e.g., `'my-pern-workshop'`)
+- **`license_key`** — Paste your **New Relic Ingest License Key**
+
+> [!NOTE]
+> To locate your Ingest License Key, refer to [New Relic API keys](https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/)
+
+Save the file once updated.
+
+### Step 3 – Enable APM in your Node service
+
+Open the file `packages/backend/server.js` and add the following line at the **very top** (line 1):
+
+```javascript
+const newrelic = require('newrelic');
+```
+
+This ensures New Relic APM hooks into your application when it starts.
+
+### Step 4 – Start the service & generate data
+
+**Terminal 1** — Start the backend with New Relic enabled:
+
+```bash
+cd packages/backend
+npm run start:nr
+```
+
+**Terminal 2** — Generate traffic by running the load generator:
+
+```bash
+cd packages/backend
+npm run load
+```
+
+> [!NOTE]
+> Press `Esc` or `Ctrl+C` to stop the load generator after a minute or two.
+
+### Step 5 – Verify APM in New Relic
+
+Head to **[New Relic](https://one.newrelic.com/) → APM & Services**. You should see an entity with your chosen application name.
+
+> [!NOTE]
+> It can take a few minutes for the service to appear in the New Relic UI.
+
+![APM in New Relic](assets/instruqt-APM-summary.png)
+
+---
+
+## Challenge 2 – Instrument the Host with Infrastructure
+
+New Relic Infrastructure monitoring offers flexible, dynamic observability for your entire infrastructure. It enables you to track the health and performance of hosts — whether physical machines, VMs, or containers.
+
+In this challenge, we will manually install and configure the Infrastructure agent.
+
+> [!IMPORTANT]
+> Make sure to stop any running servers from Challenge 1 before proceeding (`Ctrl+C` in those terminals).
+
+### Step 1 – Create the Infrastructure configuration file
+
+In a **new terminal**, run:
+
+```bash
+echo "license_key: <YOUR_LICENSE_KEY>" | sudo tee /etc/newrelic-infra.yml
+```
+
+Now open the file `/etc/newrelic-infra.yml` in the VS Code editor and replace `<YOUR_LICENSE_KEY>` with your actual New Relic **Ingest License Key**. Save the file.
+
+### Step 2 – Add the Infrastructure agent repository
+
+Download and install the New Relic Infrastructure repo GPG key:
+
+```bash
+sudo curl -fsSL https://download.newrelic.com/infrastructure_agent/gpg/newrelic-infra.gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/newrelic-infra.gpg
+```
+
+### Step 3 – Enable the repository
+
+Add the repo to the APT sources list:
+
+```bash
+echo "deb https://download.newrelic.com/infrastructure_agent/linux/apt/ jammy main" | sudo tee -a /etc/apt/sources.list.d/newrelic-infra.list
+```
+
+### Step 4 – Install the Infrastructure agent
+
+```bash
+sudo apt-get update -y
+sudo apt-get install newrelic-infra -y
+```
+
+### Step 5 – Start the agent
+
+Since Codespaces doesn't use `systemd`, start the agent directly in the background:
+
+```bash
+sudo /usr/bin/newrelic-infra -config /etc/newrelic-infra.yml > /tmp/newrelic-infra.log 2>&1 &
+```
+
+Verify it's running:
+
+```bash
+ps aux | grep newrelic-infra
+```
+
+### Step 6 – Verify Infrastructure data in New Relic
+
+Head to your New Relic account → **Infrastructure → Hosts**. You should see a new host entity appearing.
+
+> [!NOTE]
+> It may take a few minutes before data appears in the dashboard.
+
+![Infrastructure in New Relic](assets/instruqt-infra-agent.jpg)
+
+---
+
+## Challenge 3 – Configure Log Forwarding
+
+Monitoring logs is essential with modern cloud-based applications. New Relic's log management platform provides fast, scalable solutions that connect your logs with the rest of your telemetry data.
+
+In this challenge, we'll leverage the Infrastructure agent (installed in Challenge 2) to forward logs to New Relic.
+
+### Step 1 – Create a custom logging configuration
+
+```bash
+sudo touch /etc/newrelic-infra/logging.d/dummy-logging.yml
+```
+
+### Step 2 – Add logging configuration
+
+Open the file `/etc/newrelic-infra/logging.d/dummy-logging.yml` in VS Code and add the following:
+
+```yaml
+logs:
+  - name: dummy-logs
+    file: /tmp/dummy.log # Path to a single log file
+```
+
+Save the file.
+
+### Step 3 – Restart the Infrastructure agent
+
+Stop the running agent and restart it to pick up the new config:
+
+```bash
+# Find and stop the running agent
+sudo pkill -f newrelic-infra
+
+# Start it again
+sudo /usr/bin/newrelic-infra -config /etc/newrelic-infra.yml > /tmp/newrelic-infra.log 2>&1 &
+```
+
+### Step 4 – Generate dummy logs
+
+Run the `flog` utility (pre-installed in this Codespace) to generate sample log data:
+
+```bash
+flog -t log -n 2000 -d 0.5 -o /tmp/dummy.log -w
+```
+
+> [!NOTE]
+> Press `Ctrl+C` to stop log generation after a minute.
+
+### Step 5 – Verify your logs in New Relic
+
+Head to your New Relic account → **Logs** in the left panel. You should see your `dummy-logs` appearing.
+
+> [!NOTE]
+> It may take a few minutes before logs show up.
+
+![Logs in New Relic](assets/instruqt-logs-image.jpg)
+
+### Bonus – Automatic Logs in Context
+
+When you set up the APM agent (Challenge 1), it automatically captures contextual logging from your Node service during runtime. You can view these logs alongside distributed traces:
+
+1. Go to your APM app in New Relic
+2. Select **Distributed Tracing**
+3. Choose any trace
+4. Switch to the **Logs** tab — you'll see logs from that specific trace
+
+![Automatic Logs in Context](assets/logs_in_context.jpg)
+
+---
+
+## Challenge 4 – Frontend Real User Monitoring with Browser
+
+New Relic Browser enables you to monitor real user activity in your web application. By adding a small JavaScript snippet to your React app, you gain visibility into page load times, JS errors, AJAX calls, and session traces.
+
+### Step 1 – Get your Backend API URL
+
+Your Codespace assigns a **unique public URL** for each forwarded port. You'll need the backend URL for the React app to connect to.
+
+In the **Ports** tab at the bottom of VS Code (next to the Terminal tab):
+1. Find port **8080** (labeled "Backend (Node/Express)")
+2. Right-click → **Copy Local Address** — it will look like `https://<codespace-name>-8080.app.github.dev`
+
+### Step 2 – Update the Frontend API URL
+
+Open `packages/frontend/.env.local` and update the `VITE_APP_API_URL` variable:
+
+```bash
+PORT=80
+NODE_ENV=development
+VITE_APP_API_URL='https://<codespace-name>-8080.app.github.dev/api'
+```
+
+Replace `<codespace-name>-8080.app.github.dev` with the actual URL you copied from the Ports tab.
+
+> [!IMPORTANT]
+> Make sure to include `/api` at the end of the URL.
+
+### Step 3 – Start both apps
+
+**Terminal 1** — Start the backend (with New Relic):
+
+```bash
+cd packages/backend
+npm run start:nr
+```
+
+**Terminal 2** — Start the frontend:
+
+```bash
+cd packages/frontend
+npm start
+```
+
+Once running, find port **80** in the **Ports** tab, copy its URL, and open it in your browser. You should see the Tutorial app.
+
+> [!NOTE]
+> Make sure the backend server is running before accessing the web app.
+
+### Step 4 – Set up Browser SPA Agent
+
+We'll add the Browser agent manually using the copy/paste method, which is ideal for SPAs that talk to a REST API backend.
+
+1. Go to [one.newrelic.com](https://one.newrelic.com/) → **Add data** (left panel) → **Browser & Mobile**
+2. Select **React** as the data source
+3. Choose **Copy/Paste JavaScript code** as the deployment method
+
+   ![Add Data Browser](assets/browser+react.gif)
+
+4. Scroll to the bottom → Select **No (Name your standalone app)** → Enter a name → Click **Enable**
+5. **Copy** the generated JavaScript snippet
+
+   ![Copy SPA snippet](assets/react-spa-configuration.gif)
+
+6. Open `packages/frontend/index.html` in VS Code
+7. Paste the snippet inside the `<head>` section
+
+Save the file.
+
+### Step 5 – Restart and generate traffic
+
+Stop both services (`Ctrl+C`) and start them again. Then open the frontend URL in your browser and click around the app to generate traffic.
+
+### Step 6 – Verify Browser data in New Relic
+
+Head to **New Relic → Browser** in the left panel. You should see your browser application.
+
+![Browser App Dashboard](assets/instruqt-browser-image.png)
+
+> [!NOTE]
+> It may take up to 5 minutes for data to appear.
+
+---
+
+## Challenge 5 – Proactive Monitoring with Synthetics
+
+New Relic Synthetic monitoring lets you proactively detect and resolve issues before they impact your customers. Synthetic monitors simulate user journeys and test API endpoints from locations around the world.
+
+> [!IMPORTANT]
+> For Synthetics to reach your Codespace app, the port must be set to **public**. This is already configured in the devcontainer, but verify by checking the **Ports** tab — port 80 should show a 🌐 globe icon (visibility: Public).
+
+### Get your Frontend Public URL
+
+In the **Ports** tab, find port **80** → Right-click → **Copy Local Address**. This is the URL you'll use for Synthetics.
+
+It will look like: `https://<codespace-name>-80.app.github.dev`
+
+> [!NOTE]
+> Make sure both your frontend and backend services are running before setting up monitors.
+
+### Simple Browser Monitor
+
+A Simple Browser check tests a full page load and provides resource breakdowns and timelines.
+
+1. Go to New Relic → [Synthetic monitoring](https://one.newrelic.com/synthetics-nerdlets) → **Create Monitor**
+2. Choose **Page Load Performance**
+3. Enter a **Name** for your monitor
+4. Paste your **Codespace Frontend URL** in the URL field
+5. Choose **one** location
+6. Click **Save**
+
+![Simple Browser Setup](assets/synthetics-simple-browser.gif)
+
+Wait a few minutes for the checks to complete. You'll see success/failure results on the Summary screen.
+
+![Simple Browser Check](assets/SimpleBrowser_synthetics.jpg)
+
+### Scripted Browser Monitor
+
+Scripted browser monitors allow sophisticated, customized monitoring with navigation flows and assertions.
+
+1. Go to Synthetic monitoring → **Create Monitor**
+2. Choose **User flow / functionality**
+3. Enter a **Name**
+4. Choose **one** location
+5. In the **Write Script** section, replace all contents with the script below
+
+> [!IMPORTANT]
+> Update the `URL` variable in the script with your Codespace Frontend URL before saving.
+
+```javascript
+// Generated by Selenium IDE
+// New Relic Synthetics Formatter for Selenium IDE
+// https://docs.newrelic.com/docs/synthetics/new-relic-synthetics/scripting-monitors/writing-scripted-browsers
+
+  const assert = require("assert");
+  const urlRequest = require("urllib").request;
+  // Theshold for duration of entire script - fails test if script lasts longer than X (in ms)
+  // Script-wide timeout for all wait and waitAndFind functions (in ms)
+  var DefaultTimeout = 30000;
+  // Change to any User Agent you want to use.
+  // Leave as "default" or empty to use the Synthetics default.
+  var UserAgent = "default";
+  const URL = "<PASTE YOUR CODESPACE URL HERE>";
+  const By = $driver.By;
+  const browser = $browser.manage();
+  var vars = new Map();
+  const logger = function({timeout:e=18e4,stepLogging:t=!1,insightsKey:n=""}){const r=Date.now();var s=0,o="",i=0,a=0;function l({step:e=0,msg:t="",duration:r=0,eventType:s="SyntheticsCustom",custom:o={}}){if(void 0===n||""==n)return;var i={method:"POST",headers:{"X-Insert-Key":n,"Content-Type":"application/json"},data:{eventType:s,step:e,message:t,duration:r,JOB_ID:$env.JOB_ID,MONITOR_ID:$env.MONITOR_ID,ACCOUNT_ID:$env.ACCOUNT_ID,LOCATION:$env.LOCATION,PROXY_HOST:$env.PROXY_HOST,PROXY_PORT:$env.PROXY_PORT},dataType:"text"};const a=`https://insights-collector.newrelic.com/v1/accounts/${$env.ACCOUNT_ID}/events`;i.data=Object.assign({},i.data,o),urlRequest(a,i)}function c(e,t,n=""){e>a&&0!=a&&_({testCase:n});let i=`Step ${e}: ${t} STARTED at ${s=Date.now()-r}ms. testCase=${n}`;console.log(i),o=t,a=e}function _({testCase:i=""}){var c=Date.now()-r,_=c-s;if(console.log(`Step ${a}: ${o} FINISHED. It took ${_}ms to complete. testCase=${i}`),t&&n.length>0?l({step:a,msg:o,duration:_,custom:{testCase:i}}):t&&$util.insights.set(`Step ${a}: ${o}`,_),e>0&&c>e)throw new Error("Script timed out. "+c+"ms is longer than script timeout threshold of "+e+"ms.")}return{logStep:function(e){c(i++,e)},log:c,getStep:function(){return i},end:_,endTestCase:function(e=""){var i=Date.now()-r-s;console.log(`Step ${a}: ${o} FINISHED. It took ${i}ms to complete.`),t&&n.length>0?l({step:a,msg:o,duration:i,custom:{testCase:e}}):t&&$util.insights.set(`Step ${a}: ${o}`,i),$util.insights.set("testCase",e),$util.insights.set("testCaseStatus","Pass"),t&&n.length>0&&l({eventType:"SyntheticsTests",custom:{testCase:e,testCaseStatus:"Pass"}})},error:function(e,r=""){console.log(`Error in Step ${a}: ${o}`),$util.insights.set("errorStep",""+a),$util.insights.set("errorMsg",e.message),$util.insights.set("errorLineNumber",e.lineNumber),$util.insights.set("testCase",r),$util.insights.set("testCaseStatus","fail"),t&&n.length>0&&l({eventType:"SyntheticsTests",custom:{testCase:r,testCaseStatus:"Fail"}})},postInsights:l}}({})
+  $browser.getCapabilities().then(function () { })
+  // Test Case: app-edit_item_change_status
+  .then(function (){
+  	return Promise.resolve(true)
+
+    .then( function(){return logger.log(1,`Open URL ${URL}`,"app-edit_item_change_status"),$browser.get(`${URL}`).then(e=>e)})
+    .then( function(){return logger.log(2,"Set Window Size Width=1686 Height=1055","app-edit_item_change_status"),$browser.manage().window().setSize(1686,1055).then(e=>e)})
+    .then( function(){return logger.log(3,"Mouse move","app-edit_item_change_status"),$browser.waitForAndFindElement(By.css("tr:nth-child(3) .p-button-info"),DefaultTimeout).then(e=>Promise.resolve($browser.actions().mouseMove(e).perform()))})
+    .then( function(){return logger.log(4,"Mouse out By.tagName(\"body\")","app-edit_item_change_status"),$browser.waitForAndFindElement(By.tagName("body"),DefaultTimeout).then(e=>Promise.resolve($browser.actions().mouseMove(e,0,0).perform()))})
+    .then( function(){return logger.log(5,"Click By.css(\"tr:nth-child(3) .p-button-info > .p-button-icon\")","app-edit_item_change_status"),$browser.waitForAndFindElement(By.css("tr:nth-child(3) .p-button-info > .p-button-icon"),DefaultTimeout).then(e=>(e.click(),Promise.resolve(!0)))})
+    .then( function(){return logger.log(6,"Click By.xpath(\"//div[@id='root']/div/main/div/div[2]/div[2]/div/button[2]/span[2]\")","app-edit_item_change_status"),$browser.waitForAndFindElement(By.xpath("//div[@id='root']/div/main/div/div[2]/div[2]/div/button[2]/span[2]"),DefaultTimeout).then(e=>(e.click(),Promise.resolve(!0)))})
+    .then( function(){return logger.log(7,"Click By.css(\".p-button-outlined > .p-button-label\")","app-edit_item_change_status"),$browser.waitForAndFindElement(By.css(".p-button-outlined > .p-button-label"),DefaultTimeout).then(e=>(e.click(),Promise.resolve(!0)))})
+    .then( function(){return logger.log(8,"Close Browser","app-edit_item_change_status"),Promise.resolve($browser.close())})
+  	.then(function() {
+  		logger.endTestCase("app-edit_item_change_status");
+  	}, function(err) {
+  		logger.error (err, "app-edit_item_change_status");
+  		throw(err);
+  	});
+
+  })
+```
+
+Validate the script, then save. Wait a few minutes for the monitor to run.
+
+![Scripted Browser Setup](assets/synthetics-scripted-browser.gif)
+
+If all steps were followed correctly, you should see results like this:
+
+![Scripted Browser Check](assets/ScriptedBrowser_synthetics.jpg)
+
+---
+
+## 🎉 Congratulations!
+
+You have successfully completed the Full Stack Observability Workshop! Here's what you accomplished:
+
+- ✅ Instrumented a Node.js API with **APM** for transaction monitoring and distributed tracing
+- ✅ Deployed the **Infrastructure agent** to monitor the underlying host metrics
+- ✅ Configured **Log Forwarding** to centralize your application and system logs
+- ✅ Set up **Browser monitoring** for Real User Monitoring of your React SPA
+- ✅ Created **Synthetic monitors** for proactive uptime and functional testing
+
+### What's Next?
+
+- Explore **Alerts & AI** — Set up alert policies and anomaly detection for your instrumented services
+- Try **Dashboards** — Build custom dashboards combining APM, Browser, Infrastructure, and Log data
+- Dive into **NRQL** — Write custom queries to explore your telemetry data in-depth
+- Read the docs: [docs.newrelic.com](https://docs.newrelic.com/)
+
+---
+
+*Created by the Developer Relations team at New Relic. GitHub Codespaces Edition — March 2026.*
