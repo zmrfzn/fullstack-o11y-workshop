@@ -72,7 +72,9 @@ const setCategories = async (data) => {
 
 const getCategoriesFromCache = async () => {
   Logger.info(`Getting categories from cache`);
-  window.newrelic.log('Getting categories from cache', {level: 'info'});
+  if (window.newrelic && typeof window.newrelic.log === 'function') {
+    window.newrelic.log('Getting categories from cache', {level: 'info'});
+  }
 
   const item = localStorage.getItem('categories');
   
