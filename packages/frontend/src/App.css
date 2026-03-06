@@ -1,38 +1,72 @@
+@import './theme.css';
+@import './animations.css';
+
+/* Minimal app-level custom styles */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
 .logo {
-  height: 6em;
-  padding: 1.5em;
+  height: 2em;
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 1em var(--nr-primary));
 }
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-
 
 .list {
   text-align: left;
-  max-width: 300vw;
+  max-width: 100%;
   margin: auto;
 }
 
 .submit-form {
-  max-width: 300px;
+  max-width: 500px;
   margin: auto;
 }
 
 .edit-form {
-  max-width: 300px;
+  max-width: 500px;
   margin: auto;
 }
-.p-chip.custom-chip.pending {
-  background: orange;
-  color: black;
+
+.p-chip.custom-chip {
+  font-size: 0.8rem;
+  padding: 0.2rem 0.5rem;
 }
+
+.p-chip.custom-chip.pending {
+  background: var(--nr-accent);
+  color: var(--nr-bg-base);
+}
+
 .p-chip.custom-chip.published {
-  background: green;
-  color: white;
+  background: var(--nr-success);
+  color: var(--nr-bg-base);
+}
+
+/* Sidebar overrides */
+.sidebar {
+  width: var(--sidebar-width);
+  background-color: var(--nr-bg-dark);
+  border-right: 1px solid var(--nr-border);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: fixed;
+  z-index: 100;
+}
+
+.main-content {
+  flex-grow: 1;
+  margin-left: var(--sidebar-width);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--nr-bg-base);
 }

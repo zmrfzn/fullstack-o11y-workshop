@@ -35,7 +35,7 @@ const Tutorial = () => {
     viewCount: 0,
     likes: 0
   };
-  
+
   const [tutorial, setTutorial] = useState(initialTutorialState);
   const [loading, setLoading] = useState(true);
   const [dirty, setDirty] = useState(false);
@@ -43,7 +43,7 @@ const Tutorial = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [tagArray, setTagArray] = useState([]);
-  
+
   const difficultyOptions = [
     { label: 'Beginner', value: 'beginner' },
     { label: 'Intermediate', value: 'intermediate' },
@@ -60,13 +60,13 @@ const Tutorial = () => {
         timestamp: new Date().toISOString()
       });
     }
-    
+
     if (id) {
       loadTutorial();
     } else {
       setLoading(false);
     }
-    
+
     const startTime = performance.now();
     return () => {
       // Clean up or send final metrics when component unmounts
@@ -84,7 +84,7 @@ const Tutorial = () => {
 
   const loadTutorial = async () => {
     setLoading(true);
-    
+
     // Start a New Relic custom trace segment
     /*let actionTrace;
     if (window.newrelic) {
@@ -94,54 +94,54 @@ const Tutorial = () => {
     }
     
     const startTime = performance.now(); */
-    
+
     try {
       // Get categories first
       const categoriesData = await TutorialDataService.getCategories();
       setCategories(categoriesData);
-      
+
       // Then get tutorial details
       const response = await TutorialDataService.get(id);
       const tutorialData = response.data;
-      
+
       // Apply difficulty mapping
       const mappedTutorial = mapDifficulty(tutorialData);
-      
+
       // Convert tags string to array if exists
       const tagsArray = mappedTutorial.tags ? mappedTutorial.tags.split(',') : [];
       setTagArray(tagsArray);
-      
+
       setTutorial(mappedTutorial);
       setSelectedCategory(categoriesData.find(c => c.id == mappedTutorial.category) || null);
       setLoading(false);
-      
-     /* const endTime = performance.now();
-      
-      if (window.newrelic) {
-        window.newrelic.addToTrace({
-          name: 'tutorial_loaded_for_edit',
-          start: startTime,
-          end: endTime,
-          type: 'data_fetch'
-        });
-        window.newrelic.setCustomAttribute('api_metric', 'api.tutorial.get.duration');
-        window.newrelic.setCustomAttribute('status_code', 200);
-        window.newrelic.setCustomAttribute('tutorial_id', id);
-        window.newrelic.setCustomAttribute('tutorial_title', mappedTutorial.title);
-        window.newrelic.setCustomAttribute('category', mappedTutorial.category);
-        window.newrelic.setCustomAttribute('is_published', mappedTutorial.published);
-        
-        window.newrelic.setCustomAttribute('current_tutorial_id', id);
-        window.newrelic.setCustomAttribute('current_tutorial_title', mappedTutorial.title);
-        window.newrelic.setCustomAttribute('current_tutorial_published', mappedTutorial.published);
-        
-        // Complete the interaction
-        if (actionTrace) {
-          actionTrace.setAttribute('duration_ms', endTime - startTime);
-          actionTrace.setAttribute('success', true);
-          actionTrace.save();
-        }
-      } */
+
+      /* const endTime = performance.now();
+       
+       if (window.newrelic) {
+         window.newrelic.addToTrace({
+           name: 'tutorial_loaded_for_edit',
+           start: startTime,
+           end: endTime,
+           type: 'data_fetch'
+         });
+         window.newrelic.setCustomAttribute('api_metric', 'api.tutorial.get.duration');
+         window.newrelic.setCustomAttribute('status_code', 200);
+         window.newrelic.setCustomAttribute('tutorial_id', id);
+         window.newrelic.setCustomAttribute('tutorial_title', mappedTutorial.title);
+         window.newrelic.setCustomAttribute('category', mappedTutorial.category);
+         window.newrelic.setCustomAttribute('is_published', mappedTutorial.published);
+         
+         window.newrelic.setCustomAttribute('current_tutorial_id', id);
+         window.newrelic.setCustomAttribute('current_tutorial_title', mappedTutorial.title);
+         window.newrelic.setCustomAttribute('current_tutorial_published', mappedTutorial.published);
+         
+         // Complete the interaction
+         if (actionTrace) {
+           actionTrace.setAttribute('duration_ms', endTime - startTime);
+           actionTrace.setAttribute('success', true);
+           actionTrace.save();
+         }
+       } */
     } catch (error) {
       /*const endTime = performance.now();
       
@@ -170,7 +170,7 @@ const Tutorial = () => {
           actionTrace.save();
         }
       } */
-      
+
       console.error("Error loading tutorial:", error);
       navigate(`/404/${id}`);
       setLoading(false);
@@ -181,7 +181,7 @@ const Tutorial = () => {
     const { name, value } = event.target;
     setTutorial({ ...tutorial, [name]: value });
     setDirty(true);
-    
+
     // Track significant field changes
     if (name === 'title' || name === 'description') {
       /* if (window.newrelic && value.length > 0) {
@@ -198,7 +198,7 @@ const Tutorial = () => {
   const handleNumberChange = (name, value) => {
     setTutorial({ ...tutorial, [name]: value });
     setDirty(true);
-    
+
     /*if (window.newrelic) {
       window.newrelic.addPageAction('field_updated', {
         field_name: name,
@@ -211,9 +211,9 @@ const Tutorial = () => {
 
   const onCategoryChange = (event) => {
     setSelectedCategory(event.value);
-    setTutorial({...tutorial, 'category': event.value.id});
+    setTutorial({ ...tutorial, 'category': event.value.id });
     setDirty(true);
-    
+
     /*if (window.newrelic) {
       window.newrelic.addPageAction('category_updated', {
         category_id: event.value.id,
@@ -223,11 +223,11 @@ const Tutorial = () => {
       });
     } */
   };
-  
+
   const onDifficultyChange = (event) => {
-    setTutorial({...tutorial, 'difficulty': event.value});
+    setTutorial({ ...tutorial, 'difficulty': event.value });
     setDirty(true);
-    
+
     /*if (window.newrelic) {
       window.newrelic.addPageAction('difficulty_updated', {
         difficulty: event.value,
@@ -236,10 +236,10 @@ const Tutorial = () => {
       });
     } */
   };
-  
+
   const onTagsChange = (tags) => {
     setTagArray(tags);
-    setTutorial({...tutorial, 'tags': tags.join(',')});
+    setTutorial({ ...tutorial, 'tags': tags.join(',') });
     setDirty(true);
 
     /*if (window.newrelic) {
@@ -261,14 +261,14 @@ const Tutorial = () => {
         new_status: !tutorial.published,
         timestamp: new Date().toISOString()
       });
-    } */    
-    
+    } */
+
     updatePublishedStatus(!tutorial.published);
   };
 
   const updatePublishedStatus = (newStatus) => {
     setProcessing(true);
-    
+
     // Start a New Relic custom trace segment
     /*let actionTrace;
     if (window.newrelic) {
@@ -277,14 +277,14 @@ const Tutorial = () => {
       actionTrace.setAttribute('tutorial_id', tutorial.id);
       actionTrace.setAttribute('new_status', newStatus ? 'published' : 'unpublished');
     } */
-    
+
     const updatedTutorial = {
       ...tutorial,
       published: newStatus
     };
-    
+
     // const startTime = performance.now();
-    
+
     TutorialDataService.update(tutorial.id, updatedTutorial)
       .then(() => {
         /* const endTime = performance.now();
@@ -315,16 +315,16 @@ const Tutorial = () => {
             actionTrace.save();
           }
         } */
-        
+
         setTutorial({ ...tutorial, published: newStatus });
-        
+
         toast.current.show({
           severity: 'success',
           summary: 'Status Updated',
           detail: newStatus ? 'Tutorial published successfully' : 'Tutorial unpublished',
           life: 3000
         });
-        
+
         setProcessing(false);
       })
       .catch(error => {
@@ -356,16 +356,16 @@ const Tutorial = () => {
             actionTrace.save();
           }
         } */
-        
+
         console.error("Error updating status:", error);
-        
+
         toast.current.show({
           severity: 'error',
           summary: 'Update Failed',
           detail: 'Failed to update tutorial status',
           life: 3000
         });
-        
+
         setProcessing(false);
       });
   };
@@ -378,7 +378,7 @@ const Tutorial = () => {
         detail: 'Title is required',
         life: 3000
       });
-      
+
       /*if (window.newrelic) {
         window.newrelic.addPageAction('validation_error', {
           field: 'title',
@@ -387,12 +387,12 @@ const Tutorial = () => {
           timestamp: new Date().toISOString()
         });
       } */
-      
+
       return;
     }
-    
+
     setProcessing(true);
-    
+
     // Start a New Relic custom trace segment
     /*let actionTrace;
     if (window.newrelic) {
@@ -408,7 +408,7 @@ const Tutorial = () => {
     } 
     
     const startTime = performance.now(); */
-    
+
     TutorialDataService.update(tutorial.id, tutorial)
       .then(() => {
         /*const endTime = performance.now();
@@ -438,14 +438,14 @@ const Tutorial = () => {
             actionTrace.save();
           }
         } */
-        
+
         toast.current.show({
           severity: 'success',
           summary: 'Success',
           detail: 'Tutorial updated successfully',
           life: 3000
         });
-        
+
         setDirty(false);
         setProcessing(false);
       })
@@ -478,16 +478,16 @@ const Tutorial = () => {
             actionTrace.save();
           }
         } */
-        
+
         console.error("Error updating tutorial:", error);
-        
+
         toast.current.show({
           severity: 'error',
           summary: 'Update Failed',
           detail: 'Failed to update tutorial: ' + error.message,
           life: 3000
         });
-        
+
         setProcessing(false);
       });
   };
@@ -500,7 +500,7 @@ const Tutorial = () => {
         timestamp: new Date().toISOString()
       });
     } */
-    
+
     confirmDialog({
       message: 'Are you sure you want to delete this tutorial?',
       header: 'Delete Confirmation',
@@ -512,7 +512,7 @@ const Tutorial = () => {
 
   const deleteTutorial = () => {
     setProcessing(true);
-    
+
     // Start a New Relic custom trace segment
     /*let actionTrace;
     if (window.newrelic) {
@@ -528,7 +528,7 @@ const Tutorial = () => {
     } 
     
     const startTime = performance.now();*/
-    
+
     TutorialDataService.remove(tutorial.id)
       .then(() => {
         /*const endTime = performance.now();
@@ -558,14 +558,14 @@ const Tutorial = () => {
             actionTrace.save();
           }
         } */
-        
+
         toast.current.show({
           severity: 'success',
           summary: 'Success',
           detail: 'Tutorial deleted successfully',
           life: 3000
         });
-        
+
         navigate("/tutorials");
       })
       .catch(error => {
@@ -597,16 +597,16 @@ const Tutorial = () => {
             actionTrace.save();
           }
         } */
-        
+
         console.error("Error deleting tutorial:", error);
-        
+
         toast.current.show({
           severity: 'error',
           summary: 'Delete Failed',
           detail: 'Failed to delete tutorial: ' + error.message,
           life: 3000
         });
-        
+
         setProcessing(false);
       });
   };
@@ -620,7 +620,7 @@ const Tutorial = () => {
         timestamp: new Date().toISOString()
       });
     } */
-    
+
     navigate("/tutorials");
   };
 
@@ -640,18 +640,18 @@ const Tutorial = () => {
       <Tag value="Draft" severity="warning" />
     );
   };
-  
+
   const getDifficultyTag = () => {
     const severityMap = {
       beginner: 'info',
       intermediate: 'warning',
       advanced: 'danger'
     };
-    
+
     return (
-      <Tag 
-        value={tutorial.difficulty?.charAt(0).toUpperCase() + tutorial.difficulty?.slice(1)} 
-        severity={severityMap[tutorial.difficulty] || 'info'} 
+      <Tag
+        value={tutorial.difficulty?.charAt(0).toUpperCase() + tutorial.difficulty?.slice(1)}
+        severity={severityMap[tutorial.difficulty] || 'info'}
       />
     );
   };
@@ -662,7 +662,7 @@ const Tutorial = () => {
     <div className="tutorial-editor p-3">
       <Toast ref={toast} position="bottom-right" />
       <ConfirmDialog />
-      
+
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-start mb-4">
         <div>
           <h2 className="mb-1">Edit Tutorial</h2>
@@ -673,7 +673,7 @@ const Tutorial = () => {
             </small>
           </div>
         </div>
-        
+
         <div className="mt-3 mt-md-0">
           <ActionButtons
             onCancel={handleCancel}
@@ -691,27 +691,27 @@ const Tutorial = () => {
           />
         </div>
       </div>
-      
-      <Card className="shadow-sm mb-4">
+
+      <div className="card shadow-sm mb-4 border-0 p-4">
         <div className="row">
           <div className="col-md-8">
-            <div className="mb-3">
-              <label htmlFor="title" className="form-label">Title</label>
+            <div className="mb-4">
+              <label htmlFor="title" className="form-label text-secondary font-weight-bold">Title</label>
               <InputText
                 id="title"
                 name="title"
                 value={tutorial.title}
                 onChange={handleInputChange}
-                className="w-100"
+                className="w-100 p-inputtext-lg"
                 placeholder="E.g., Getting Started with React Hooks for Beginners"
                 required
               />
             </div>
-            
-            <div className="row">
+
+            <div className="row mb-4">
               <div className="col-md-6">
-                <div className="mb-3">
-                  <label htmlFor="category" className="form-label">Category</label>
+                <div>
+                  <label htmlFor="category" className="form-label text-secondary font-weight-bold">Category</label>
                   <Dropdown
                     id="category"
                     value={selectedCategory}
@@ -723,10 +723,10 @@ const Tutorial = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="col-md-6">
-                <div className="mb-3">
-                  <label htmlFor="author" className="form-label">Author</label>
+                <div>
+                  <label htmlFor="author" className="form-label text-secondary font-weight-bold">Author</label>
                   <InputText
                     id="author"
                     name="author"
@@ -738,11 +738,11 @@ const Tutorial = () => {
                 </div>
               </div>
             </div>
-            
-            <div className="row">
+
+            <div className="row mb-4">
               <div className="col-md-6">
-                <div className="mb-3">
-                  <label htmlFor="difficulty" className="form-label">Difficulty Level</label>
+                <div>
+                  <label htmlFor="difficulty" className="form-label text-secondary font-weight-bold">Difficulty Level</label>
                   <Dropdown
                     id="difficulty"
                     value={tutorial.difficulty}
@@ -753,10 +753,10 @@ const Tutorial = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="col-md-6">
-                <div className="mb-3">
-                  <label htmlFor="readTime" className="form-label">Read Time (minutes)</label>
+                <div>
+                  <label htmlFor="readTime" className="form-label text-secondary font-weight-bold">Read Time (minutes)</label>
                   <InputNumber
                     id="readTime"
                     value={tutorial.readTime}
@@ -767,9 +767,9 @@ const Tutorial = () => {
                 </div>
               </div>
             </div>
-            
-            <div className="mb-3">
-              <label htmlFor="imageUrl" className="form-label">Image URL</label>
+
+            <div className="mb-4">
+              <label htmlFor="imageUrl" className="form-label text-secondary font-weight-bold">Image URL</label>
               <InputText
                 id="imageUrl"
                 name="imageUrl"
@@ -779,19 +779,19 @@ const Tutorial = () => {
                 placeholder="E.g., https://example.com/images/tutorial-banner.jpg"
               />
               {tutorial.imageUrl && (
-                <div className="mt-2">
-                  <img 
-                    src={tutorial.imageUrl} 
-                    alt="Tutorial preview" 
-                    style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'cover' }} 
-                    className="rounded"
+                <div className="mt-3 text-center bg-dark p-2 rounded" style={{ border: '1px dashed var(--nr-border)' }}>
+                  <img
+                    src={tutorial.imageUrl}
+                    alt="Tutorial preview"
+                    style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'cover' }}
+                    className="rounded shadow-sm"
                   />
                 </div>
               )}
             </div>
-            
-            <div className="mb-3">
-              <label htmlFor="tags" className="form-label">Tags</label>
+
+            <div className="mb-4">
+              <label htmlFor="tags" className="form-label text-secondary font-weight-bold">Tags</label>
               <Chips
                 id="tags"
                 value={tagArray}
@@ -800,11 +800,11 @@ const Tutorial = () => {
                 className="w-100"
                 placeholder="Add tags like 'javascript', 'react', 'frontend' and press Enter"
               />
-              <small className="text-muted">Press Enter after each tag</small>
+              <small className="text-muted mt-1 d-block"><i className="pi pi-info-circle mr-1"></i>Press Enter after each tag</small>
             </div>
-            
-            <div className="mb-3">
-              <label htmlFor="description" className="form-label">Description</label>
+
+            <div className="mb-4">
+              <label htmlFor="description" className="form-label text-secondary font-weight-bold">Description</label>
               <InputTextarea
                 id="description"
                 name="description"
@@ -813,66 +813,50 @@ const Tutorial = () => {
                 rows={6}
                 className="w-100"
                 autoResize
-                placeholder="Provide a detailed description of your tutorial. Include what readers will learn, prerequisites, and why this tutorial is valuable."
+                placeholder="Provide a detailed description of your tutorial. Include what readers will learn, prerequisites, and why this tutorial is valuable. You can use paragraphs to organize your content."
               />
             </div>
           </div>
-          
+
           <div className="col-md-4">
-            <div className="card h-100 bg-light">
-              <div className="card-body">
-                <h5 className="card-title">Tutorial Details</h5>
-                <Divider />
-                
-                <p className="mb-2">
-                  <strong>ID:</strong><br />
-                  <small className="text-muted">{tutorial.id}</small>
-                </p>
-                
-                <p className="mb-2">
-                  <strong>Status:</strong><br />
-                  {tutorial.published ? (
-                    <Chip label="Published" className="custom-chip published" />
-                  ) : (
-                    <Chip label="Draft" className="custom-chip pending" />
-                  )}
-                </p>
-                
-                <p className="mb-2">
-                  <strong>Difficulty:</strong><br />
-                  {getDifficultyTag()}
-                </p>
-                
-                <p className="mb-2">
-                  <strong>Views:</strong><br />
-                  <span className="d-flex align-items-center">
-                    <i className="pi pi-eye mr-2"></i>
-                    {tutorial.viewCount || 0}
-                  </span>
-                </p>
-                
-                <p className="mb-2">
-                  <strong>Likes:</strong><br />
-                  <span className="d-flex align-items-center">
-                    <i className="pi pi-thumbs-up mr-2"></i>
-                    {tutorial.likes || 0}
-                  </span>
-                </p>
-                
-                <p className="mb-2">
-                  <strong>Created:</strong><br />
-                  <small className="text-muted">{new Date(tutorial.createdAt).toLocaleString()}</small>
-                </p>
-                
-                <p className="mb-0">
-                  <strong>Last Updated:</strong><br />
-                  <small className="text-muted">{lastUpdated}</small>
-                </p>
+            <div className="card h-100 border-0 shadow-sm" style={{ backgroundColor: 'var(--nr-surface-hover)' }}>
+              <div className="card-body p-4">
+                <div className="d-flex align-items-center mb-3">
+                  <i className="pi pi-info-circle text-primary mr-2" style={{ fontSize: '1.5rem' }}></i>
+                  <h5 className="card-title m-0 font-weight-bold text-white">Tutorial Info</h5>
+                </div>
+                <hr className="border-secondary opacity-25" />
+                <div className="mt-4">
+                  <div className="d-flex justify-content-between mb-3 border-bottom border-dark pb-2">
+                    <span className="text-secondary">ID</span>
+                    <span className="text-white font-family-monospace">{tutorial.id || 'N/A'}</span>
+                  </div>
+                  <div className="d-flex justify-content-between mb-3 border-bottom border-dark pb-2">
+                    <span className="text-secondary">Status</span>
+                    <span>{getStatusTag()}</span>
+                  </div>
+                  <div className="d-flex justify-content-between mb-3 border-bottom border-dark pb-2">
+                    <span className="text-secondary">Views</span>
+                    <span className="badge badge-pill badge-primary"><i className="pi pi-eye mr-1"></i>{tutorial.viewCount || 0}</span>
+                  </div>
+                  <div className="d-flex justify-content-between mb-3 border-bottom border-dark pb-2">
+                    <span className="text-secondary">Likes</span>
+                    <span className="badge badge-pill badge-success"><i className="pi pi-thumbs-up mr-1"></i>{tutorial.likes || 0}</span>
+                  </div>
+                  <div className="d-flex flex-column mb-3 border-bottom border-dark pb-2">
+                    <span className="text-secondary mb-1">Created</span>
+                    <span className="text-white small">{new Date(tutorial.createdAt).toLocaleString()}</span>
+                  </div>
+                  <div className="d-flex flex-column mb-3 pb-2">
+                    <span className="text-secondary mb-1">Last Updated</span>
+                    <span className="text-white small">{lastUpdated}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 };

@@ -261,10 +261,10 @@ const Analytics = () => {
       ) : (
         <>
           {/* Filters */}
-          <div className="filters mb-4 p-3 border rounded bg-light">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+          <div className="filters mb-4 p-4 rounded border-0 shadow-sm" style={{ backgroundColor: 'var(--nr-surface)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
               <div>
-                <label className="font-bold d-block mb-2">Time Range</label>
+                <label className="font-weight-bold d-block mb-2 text-secondary">Time Range</label>
                 <Dropdown
                   value={timeRangeFilter}
                   options={timeRangeOptions}
@@ -274,7 +274,7 @@ const Analytics = () => {
               </div>
 
               <div>
-                <label className="font-bold d-block mb-2">Category</label>
+                <label className="font-weight-bold d-block mb-2 text-secondary">Category</label>
                 <Dropdown
                   value={categoryFilter}
                   options={categories}
@@ -289,45 +289,45 @@ const Analytics = () => {
 
           <TabView onTabChange={handleTabChange}>
             <TabPanel header="Timeline Analysis">
-              <Card title="Tutorials Created Over Time" className="shadow-sm mb-4">
+              <Card title={<span className="text-white">Tutorials Created Over Time</span>} className="shadow-sm mb-4 border-0" style={{ backgroundColor: 'var(--nr-surface)' }}>
                 <Chart type="line" data={monthlyChartData} />
               </Card>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
-                <Card className="shadow-sm">
+                <Card className="shadow-sm border-0 hover-lift" style={{ backgroundColor: 'var(--nr-surface)' }}>
                   <div className="text-center">
-                    <div className="text-xl font-bold">{tutorials.length}</div>
-                    <div>Total Tutorials</div>
+                    <div className="text-xl font-bold mb-2" style={{ color: 'var(--nr-primary)', fontSize: '2rem' }}>{tutorials.length}</div>
+                    <div className="text-secondary font-weight-bold">Total Tutorials</div>
                   </div>
                 </Card>
 
-                <Card className="shadow-sm">
+                <Card className="shadow-sm border-0 hover-lift" style={{ backgroundColor: 'var(--nr-surface)' }}>
                   <div className="text-center">
-                    <div className="text-xl font-bold">{publishedRatio.published}</div>
-                    <div>Published</div>
+                    <div className="text-xl font-bold mb-2 text-success" style={{ fontSize: '2rem' }}>{publishedRatio.published}</div>
+                    <div className="text-secondary font-weight-bold">Published</div>
                   </div>
                 </Card>
 
-                <Card className="shadow-sm">
+                <Card className="shadow-sm border-0 hover-lift" style={{ backgroundColor: 'var(--nr-surface)' }}>
                   <div className="text-center">
-                    <div className="text-xl font-bold">
+                    <div className="text-xl font-bold mb-2 text-info" style={{ fontSize: '2rem' }}>
                       {tutorials.length > 0
                         ? Math.round((publishedRatio.published / tutorials.length) * 100)
                         : 0}%
                     </div>
-                    <div>Publication Rate</div>
+                    <div className="text-secondary font-weight-bold">Publication Rate</div>
                   </div>
                 </Card>
               </div>
             </TabPanel>
 
             <TabPanel header="Category Analysis">
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
-                <Card title="Published vs Unpublished" className="shadow-sm">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '1.5rem', marginBottom: '1rem' }}>
+                <Card title={<span className="text-white">Published vs Unpublished</span>} className="shadow-sm border-0" style={{ backgroundColor: 'var(--nr-surface)' }}>
                   <Chart type="pie" data={publishedChartData} options={{ responsive: true, maintainAspectRatio: false }} />
                 </Card>
 
-                <Card title="Category Statistics" className="shadow-sm">
+                <Card title={<span className="text-white">Category Statistics</span>} className="shadow-sm border-0" style={{ backgroundColor: 'var(--nr-surface)' }}>
                   <DataTable value={categoryBreakdown} responsiveLayout="scroll" paginator rows={5}>
                     <Column field="name" header="Category" sortable />
                     <Column field="count" header="Total" sortable />
@@ -339,25 +339,25 @@ const Analytics = () => {
             </TabPanel>
 
             <TabPanel header="Content Analysis">
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
-                <Card className="shadow-sm">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                <Card className="shadow-sm border-0 hover-lift" style={{ backgroundColor: 'var(--nr-surface)' }}>
                   <div className="text-center">
-                    <div className="text-xl font-bold">{wordCountStats.average}</div>
-                    <div>Average Word Count</div>
+                    <div className="text-xl font-bold mb-2 text-info" style={{ fontSize: '2rem' }}>{wordCountStats.average}</div>
+                    <div className="text-secondary font-weight-bold">Average Word Count</div>
                   </div>
                 </Card>
 
-                <Card className="shadow-sm">
+                <Card className="shadow-sm border-0 hover-lift" style={{ backgroundColor: 'var(--nr-surface)' }}>
                   <div className="text-center">
-                    <div className="text-xl font-bold">{wordCountStats.max}</div>
-                    <div>Longest Description</div>
+                    <div className="text-xl font-bold mb-2 text-warning" style={{ fontSize: '2rem' }}>{wordCountStats.max}</div>
+                    <div className="text-secondary font-weight-bold">Longest Description</div>
                   </div>
                 </Card>
 
-                <Card className="shadow-sm">
+                <Card className="shadow-sm border-0 hover-lift" style={{ backgroundColor: 'var(--nr-surface)' }}>
                   <div className="text-center">
-                    <div className="text-xl font-bold">{wordCountStats.min}</div>
-                    <div>Shortest Description</div>
+                    <div className="text-xl font-bold mb-2 text-success" style={{ fontSize: '2rem' }}>{wordCountStats.min}</div>
+                    <div className="text-secondary font-weight-bold">Shortest Description</div>
                   </div>
                 </Card>
               </div>

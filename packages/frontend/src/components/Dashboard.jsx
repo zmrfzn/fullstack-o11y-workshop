@@ -24,19 +24,19 @@ const Dashboard = () => {
         const response = await TutorialDataService.getAll();
         const allTutorials = response.data;
         setTutorials(allTutorials);
-        
+
         // Process category data
         const categories = await TutorialDataService.getCategories();
         const categoryMap = new Map();
-        
+
         // Initialize category counts
         categories.forEach(category => {
-          categoryMap.set(category.id, { 
-            name: category.category, 
-            count: 0 
+          categoryMap.set(category.id, {
+            name: category.category,
+            count: 0
           });
         });
-        
+
         // Count tutorials by category
         allTutorials.forEach(tutorial => {
           if (tutorial.category && categoryMap.has(Number(tutorial.category))) {
@@ -44,7 +44,7 @@ const Dashboard = () => {
             category.count += 1;
           }
         });
-        
+
         // Extract data for chart
         const labels = [];
         const data = [];
@@ -52,22 +52,22 @@ const Dashboard = () => {
           labels.push(category.name);
           data.push(category.count);
         });
-        
+
         setCategoryStats({
           labels,
           data
         });
-        
+
         // Get published stats
         const published = allTutorials.filter(t => t.published).length;
         const unpublished = allTutorials.length - published;
         setPublishedStats({ published, unpublished });
-        
+
         // Get recent tutorials (latest 5)
-        const sortedTutorials = [...allTutorials].sort((a, b) => 
+        const sortedTutorials = [...allTutorials].sort((a, b) =>
           new Date(b.updatedAt) - new Date(a.updatedAt)
         ).slice(0, 5);
-        
+
         setRecentTutorials(sortedTutorials);
         setLoading(false);
       } catch (error) {
@@ -75,7 +75,7 @@ const Dashboard = () => {
         setLoading(false);
       }
     };
-    
+
     fetchData();
   }, []);
 
@@ -102,9 +102,9 @@ const Dashboard = () => {
   };
 
   const publishedStatusTemplate = (rowData) => {
-    return rowData.published ? 
-      <Tag severity="success" value="Published" /> : 
-      <Tag severity="warning" value="Draft" />;
+    return rowData.published ?
+      <span className="badge badge-pill badge-success mr-2">Published</span> :
+      <span className="badge badge-pill badge-warning mr-2 pulse-glow-warning">Draft</span>;
   };
 
   const dateTemplate = (rowData) => {
@@ -122,7 +122,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard p-4">
       <h2 className="mb-4">Dashboard</h2>
-      
+
       {loading ? (
         <div className="text-center p-5">
           <ProgressBar mode="indeterminate" style={{ height: '6px' }} />
@@ -131,49 +131,49 @@ const Dashboard = () => {
       ) : (
         <>
           {/* Metrics Overview */}
-          <div className="grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-            <Card className="shadow-sm">
+          <div className="grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+            <Card className="shadow-sm border-0 hover-lift" style={{ backgroundColor: 'var(--nr-surface)' }}>
               <div className="text-center">
-                <div className="text-xl text-primary font-bold">{tutorials.length}</div>
-                <div>Total Tutorials</div>
+                <div className="text-xl font-bold mb-2" style={{ color: 'var(--nr-primary)', fontSize: '2rem' }}>{tutorials.length}</div>
+                <div className="text-secondary font-weight-bold">Total Tutorials</div>
               </div>
             </Card>
-            
-            <Card className="shadow-sm">
+
+            <Card className="shadow-sm border-0 hover-lift" style={{ backgroundColor: 'var(--nr-surface)' }}>
               <div className="text-center">
-                <div className="text-xl text-success font-bold">{publishedStats.published}</div>
-                <div>Published</div>
+                <div className="text-xl font-bold mb-2 text-success" style={{ fontSize: '2rem' }}>{publishedStats.published}</div>
+                <div className="text-secondary font-weight-bold">Published</div>
               </div>
             </Card>
-            
-            <Card className="shadow-sm">
+
+            <Card className="shadow-sm border-0 hover-lift" style={{ backgroundColor: 'var(--nr-surface)' }}>
               <div className="text-center">
-                <div className="text-xl text-warning font-bold">{publishedStats.unpublished}</div>
-                <div>Drafts</div>
+                <div className="text-xl font-bold mb-2 text-warning" style={{ fontSize: '2rem' }}>{publishedStats.unpublished}</div>
+                <div className="text-secondary font-weight-bold">Drafts</div>
               </div>
             </Card>
-            
-            <Card className="shadow-sm">
+
+            <Card className="shadow-sm border-0 hover-lift" style={{ backgroundColor: 'var(--nr-surface)' }}>
               <div className="text-center">
-                <div className="text-xl text-info font-bold">{categoryStats.labels.length}</div>
-                <div>Categories</div>
+                <div className="text-xl font-bold mb-2 text-info" style={{ fontSize: '2rem' }}>{categoryStats.labels.length}</div>
+                <div className="text-secondary font-weight-bold">Categories</div>
               </div>
             </Card>
           </div>
-          
+
           {/* Charts */}
-          <div className="grid mb-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '1rem' }}>
-            <Card title="Tutorials by Category" className="shadow-sm">
+          <div className="grid mb-5" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '1.5rem' }}>
+            <Card title={<span className="text-white">Tutorials by Category</span>} className="shadow-sm border-0" style={{ backgroundColor: 'var(--nr-surface)' }}>
               <Chart type="doughnut" data={categoryChartData} options={{ responsive: true, maintainAspectRatio: false }} />
             </Card>
-            
-            <Card title="Publication Status" className="shadow-sm">
+
+            <Card title={<span className="text-white">Publication Status</span>} className="shadow-sm border-0" style={{ backgroundColor: 'var(--nr-surface)' }}>
               <Chart type="pie" data={publishedChartData} options={{ responsive: true, maintainAspectRatio: false }} />
             </Card>
           </div>
-          
+
           {/* Recent Tutorials */}
-          <Card title="Recently Updated Tutorials" className="shadow-sm mb-4">
+          <Card title={<span className="text-white">Recently Updated Tutorials</span>} className="shadow-sm mb-4 border-0" style={{ backgroundColor: 'var(--nr-surface)' }}>
             <DataTable value={recentTutorials} responsiveLayout="scroll" emptyMessage="No tutorials found">
               <Column field="title" header="Title" sortable />
               <Column field="category" header="Category" sortable />
@@ -181,7 +181,7 @@ const Dashboard = () => {
               <Column header="Last Updated" body={dateTemplate} sortable field="updatedAt" />
               <Column header="Actions" body={actionTemplate} />
             </DataTable>
-            
+
             <div className="mt-3 text-right">
               <Link to="/tutorials">
                 <Button label="View All Tutorials" className="p-button-text" />

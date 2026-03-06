@@ -1,0 +1,79 @@
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(0, 179, 164, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(0, 179, 164, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 179, 164, 0); }
+}
+
+@keyframes pulseGlowWarning {
+  0% { box-shadow: 0 0 0 0 rgba(240, 180, 0, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(240, 180, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(240, 180, 0, 0); }
+}
+
+.pulse-glow {
+  animation: pulseGlow 2s infinite;
+}
+
+.pulse-glow-warning {
+  animation: pulseGlowWarning 2s infinite;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--nr-surface) 25%, var(--nr-surface-hover) 50%, var(--nr-surface) 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 2s infinite linear;
+  border-radius: 4px;
+}
+
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin-anim {
+  animation: spin 1s linear infinite;
+}

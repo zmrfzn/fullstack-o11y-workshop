@@ -30,9 +30,9 @@ const Published = () => {
             });
         }
         */
-        
+
         getAllPublishedTutorials();
-        
+
         return () => {
             /* Commenting out page actions
             // Clean up or send final metrics when component unmounts
@@ -48,7 +48,7 @@ const Published = () => {
 
     const updatePublished = (tutorial, newStatus) => {
         setProcessing(true);
-        
+
         /* Commenting out action trace
         // New Relic custom attribute for action
         if (window.newrelic) {
@@ -65,18 +65,18 @@ const Published = () => {
             actionTrace.setAttribute('tutorial_id', tutorial.id);
         }
         */
-        
+
         const data = {
             ...tutorial,
             published: newStatus
         };
-    
+
         // const startTime = performance.now();
-        
+
         TutorialDataService.update(tutorial.id, data)
             .then(() => {
                 // const endTime = performance.now();
-                
+
                 /* Commenting out custom spans
                 if (window.newrelic) {
                     window.newrelic.addToTrace({
@@ -90,7 +90,7 @@ const Published = () => {
                     });
                 }
                 */
-                
+
                 toast.current.show({
                     severity: 'success',
                     summary: 'Success',
@@ -102,7 +102,7 @@ const Published = () => {
             })
             .catch(error => {
                 // const endTime = performance.now();
-                
+
                 /* Commenting out error tracking
                 if (window.newrelic) {
                     window.newrelic.addToTrace({
@@ -122,7 +122,7 @@ const Published = () => {
                     });
                 }
                 */
-                
+
                 console.error("Error updating status:", error);
                 toast.current.show({
                     severity: 'error',
@@ -136,7 +136,7 @@ const Published = () => {
 
     const getAllPublishedTutorials = async () => {
         setLoading(true);
-        
+
         /* Commenting out action trace
         // Start a New Relic custom trace segment
         let actionTrace;
@@ -148,19 +148,19 @@ const Published = () => {
         
         const startTime = performance.now();
         */
-        
+
         try {
             const response = await TutorialDataService.findAllPublished();
-            
+
             // Apply category mapping
             const categoryMapped = await mapCategories(response.data);
-            
+
             // Apply difficulty mapping
             const fullMappedData = mapDifficulty(categoryMapped);
-            
+
             setTutorials(fullMappedData);
             setLoading(false);
-            
+
             /* Commenting out custom spans
             const endTime = performance.now();
             
@@ -214,7 +214,7 @@ const Published = () => {
                 }
             }
             */
-            
+
             console.error("Error loading published tutorials:", error);
             toast.current.show({
                 severity: 'error',
@@ -236,7 +236,7 @@ const Published = () => {
             });
         }
         */
-        
+
         navigate(`/tutorials/${tutorial.id}`);
     };
 
@@ -250,7 +250,7 @@ const Published = () => {
             });
         }
         */
-        
+
         updatePublished(tutorial, false);
     };
 
@@ -262,7 +262,7 @@ const Published = () => {
             });
         }
         */
-        
+
         navigate('/add');
     };
 
@@ -271,10 +271,10 @@ const Published = () => {
         return (
             <div className="d-flex align-items-center">
                 {rowData.imageUrl && (
-                    <img 
-                        src={rowData.imageUrl} 
+                    <img
+                        src={rowData.imageUrl}
                         alt={rowData.title}
-                        className="mr-2 rounded" 
+                        className="mr-2 rounded"
                         style={{ width: '40px', height: '40px', objectFit: 'cover' }}
                     />
                 )}
@@ -284,8 +284,8 @@ const Published = () => {
     };
 
     const categoryTemplate = (rowData) => {
-        return rowData.category ? 
-            <Chip label={rowData.category} className="p-2" /> : 
+        return rowData.category ?
+            <Chip label={rowData.category} className="p-2" /> :
             <span className="text-muted">None</span>;
     };
 
@@ -295,9 +295,9 @@ const Published = () => {
             intermediate: 'warning',
             advanced: 'danger'
         };
-        
+
         if (!rowData.difficulty) return <span className="text-muted">Not set</span>;
-        
+
         const label = rowData.difficulty.charAt(0).toUpperCase() + rowData.difficulty.slice(1);
         return <Tag severity={severityMap[rowData.difficulty]} value={label} />;
     };
@@ -347,11 +347,11 @@ const Published = () => {
     return (
         <div className="published-tutorials p-3">
             <Toast ref={toast} position="bottom-right" />
-            
+
             <div className="d-flex flex-column flex-md-row justify-content-between align-items-start mb-4">
                 <h2 className="mb-1">Published Tutorials</h2>
                 <div className="mt-3 mt-md-0">
-                    <ActionButtons 
+                    <ActionButtons
                         onSave={handleNewTutorial}
                         showCancel={false}
                         saveLabel="Add New Tutorial"
@@ -359,11 +359,11 @@ const Published = () => {
                     />
                 </div>
             </div>
-            
-            <Card className="shadow-sm">
-                <DataTable 
-                    value={tutorials} 
-                    paginator 
+
+            <div className="card shadow-sm border-0 p-2" style={{ backgroundColor: 'var(--nr-surface)' }}>
+                <DataTable
+                    value={tutorials}
+                    paginator
                     rows={10}
                     rowsPerPageOptions={[5, 10, 25]}
                     emptyMessage="No published tutorials found"
@@ -393,7 +393,7 @@ const Published = () => {
                     <Column header="Stats" body={statsTemplate} style={{ minWidth: '8rem' }} />
                     <Column body={actionsTemplate} exportable={false} style={{ minWidth: '8rem', textAlign: 'center' }} />
                 </DataTable>
-            </Card>
+            </div>
         </div>
     );
 };
