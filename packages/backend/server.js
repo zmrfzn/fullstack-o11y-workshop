@@ -8,10 +8,39 @@ const cors = require("cors");
 
 const app = express();
 
-var corsOptions = {
-  origin: "*"
-};
-app.use(cors(corsOptions));
+
+// Allow CORS for local dev, Codespaces, and preview URLs
+const allowedOrigins = [
+  'http://localhost:80',
+  'http://localhost:3000',
+  'http://127.0.0.1:80',
+  'http://127.0.0.1:3000',
+  'https://localhost:80',
+  'https://localhost:3000',
+  'https://127.0.0.1:80',
+  'https://127.0.0.1:3000',
+  // Codespaces and GitHub Codespaces preview URLs
+  /https:\/\/.+-\d+\.app\.github\.dev$/,
+  /https:\/\/.+-\d+\.githubpreview\.dev$/
+];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (
+      allowedOrigins.some(o => {
+        if (typeof o === 'string') return o === origin;
+        if (o instanceof RegExp) return o.test(origin);
+        return false;
+      })
+    ) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+}));
 
 // parse requests of content-type - application/json
 app.use(express.json());
@@ -34,8 +63,8 @@ db.sequelize
     logger.info("Synced & Connected to the database!");
   })
   .catch((err) => {
-    logger.error("Cannot connect to the database!", err.message);
-    process.exit();
+    console.error("Cannot connect to the database!", err);
+    process.exit(1);
   });
 
 // simple route
@@ -45,8 +74,16 @@ app.get("/", (req, res) => {
 
 require("./app/routes/tutorial.routes")(app);
 const weather = require("./app/routes/weather.routes");
-app.use("/api/weather",weather);
+app.use("/api/weather", weather);
 
+// Block accidental 302 redirects for API routes (Codespaces/proxy safety)
+app.use((req, res, next) => {
+  if (req.originalUrl.startsWith('/api/') && (res.statusCode === 302 || res.statusCode === 301)) {
+    logger.warn(`Blocked ${res.statusCode} redirect for API route: ${req.originalUrl}`);
+    return res.status(400).json({ message: 'Unexpected redirect for API route', path: req.originalUrl });
+  }
+  next();
+});
 // Handle 404 - Route Not Found
 app.use((req, res, next) => {
   /* Commenting out 404 tracking
@@ -56,7 +93,7 @@ app.use((req, res, next) => {
     timestamp: new Date().toISOString()
   });
   */
-  
+
   res.status(404).json({
     message: "Route not found",
     path: req.originalUrl
@@ -81,13 +118,13 @@ if (USE_HTTPS) {
       logger.info(`HTTPS Server is running on port ${HTTPS_PORT}.`);
       logger.info(`Visit https://localhost:${HTTPS_PORT} for secure connection`);
     });
-    
+
     // Optionally start HTTP server for redirects
     app.listen(PORT, () => {
       logger.info(`HTTP Server is running on port ${PORT}.`);
       logger.info(`Visit http://localhost:${PORT} for regular connection`);
     });
-    
+
   } catch (error) {
     logger.error('Error starting HTTPS server:', error);
     process.exit(1);
@@ -98,7 +135,7 @@ if (USE_HTTPS) {
     app.listen(PORT, () => {
       logger.info(`Server is running on port ${PORT}.`);
     });
-    
+
   } catch (error) {
     console.error(error);
   }
