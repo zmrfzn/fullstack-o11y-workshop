@@ -13,6 +13,7 @@ exports.get = (req, res) => {
     headers: {
       "Content-Type": "application/json",
     },
+    timeout: 500, // aggressive timeout for external API
   };
 
   axios(config)

@@ -12,79 +12,86 @@ exports.create = (req, res) => {
   // Start a custom segment for tutorial creation
   // uncomment this for custom instrumentation
   /* newrelic.startSegment('createTutorial_custom', true, () => { */
-    // Validate request
-    if (!req.body.title) {
-      
-      // uncomment this for custom instrumentation
-     /* newrelic.noticeError(new Error('Missing title in tutorial creation'), {
-        requestBody: req.body
-      }); */
-      res.status(400).send({ message: "Content can not be empty!" });
-      return;
-    }
+  // Validate request
+  if (!req.body.title) {
 
-    // Create a Tutorial
-    const tutorial = {
-      title: req.body.title,
-      description: req.body.description,
-      category: req.body.category,
-      published: req.body.published ? req.body.published : false,
-      author: req.body.author || "",
-      readTime: req.body.readTime,
-      difficulty: req.body.difficulty,
-      tags: req.body.tags,
-      imageUrl: req.body.imageUrl,
-      viewCount: 0,
-      likes: 0
-    };
-
-    // Add custom attributes for the tutorial creation
     // uncomment this for custom instrumentation
-    /* newrelic.addCustomAttribute('tutorialCategory_custom', tutorial.category);
-    newrelic.addCustomAttribute('tutorialDifficulty_custom', tutorial.difficulty); */
+    /* newrelic.noticeError(new Error('Missing title in tutorial creation'), {
+       requestBody: req.body
+     }); */
+    res.status(400).send({ message: "Content can not be empty!" });
+    return;
+  }
 
-    // Save Tutorial in the database
-    Tutorial.create(tutorial)
-      .then((data) => {
-        logger.info(`Added ${data.length} records`);
-        logger.info(
-          `${req.method} ${req.originalUrl}- ${JSON.stringify(
-            req.params
-          )} - Request Successful!!`
-        );
+  // Create a Tutorial
+  const tutorial = {
+    title: req.body.title,
+    description: req.body.description,
+    category: req.body.category,
+    published: req.body.published ? req.body.published : false,
+    author: req.body.author || "",
+    readTime: req.body.readTime,
+    difficulty: req.body.difficulty,
+    tags: req.body.tags,
+    imageUrl: req.body.imageUrl,
+    viewCount: 0,
+    likes: 0
+  };
 
-        res.send(data);
-      })
-      .catch((err) => {
-        // uncomment this for custom instrumentation
-        // Enhanced error handling with New Relic
-        /* newrelic.noticeError(err, {
-          tutorialData: tutorial,
-          errorLocation: 'tutorial.create_custom'
-        }); */
+  // Add custom attributes for the tutorial creation
+  // uncomment this for custom instrumentation
+  /* newrelic.addCustomAttribute('tutorialCategory_custom', tutorial.category);
+  newrelic.addCustomAttribute('tutorialDifficulty_custom', tutorial.difficulty); */
 
-        logger.error(
-          `${req.method} ${req.originalUrl}- ${JSON.stringify(
-            req.params
-          )} - Error fetching data`
-        );
+  // Save Tutorial in the database
+  Tutorial.create(tutorial)
+    .then((data) => {
+      logger.info(`Added ${data.length} records`);
+      logger.info(
+        `${req.method} ${req.originalUrl}- ${JSON.stringify(
+          req.params
+        )} - Request Successful!!`
+      );
 
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while creating the Tutorial.",
-        });
+      res.send(data);
+    })
+    .catch((err) => {
+      // uncomment this for custom instrumentation
+      // Enhanced error handling with New Relic
+      /* newrelic.noticeError(err, {
+        tutorialData: tutorial,
+        errorLocation: 'tutorial.create_custom'
+      }); */
+
+      logger.error(
+        `${req.method} ${req.originalUrl}- ${JSON.stringify(
+          req.params
+        )} - Error fetching data`
+      );
+
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while creating the Tutorial.",
       });
+    });
   //}); // uncomment this for custom instrumentation
 };
 
 // Retrieve all Tutorials from the database.
-exports.findAll = (req, res) => {
+exports.findAll = async (req, res) => {
   const title = req.query.title;
   var condition = title
     ? { title: { $regex: new RegExp(title), $options: "i" } }
     : {};
 
-  Tutorial.findAll({ where: condition,order: [['updatedAt', 'DESC']]})
+  // Simulate intermittent slow database query
+  if (Math.random() < 0.2) {
+    const delay = 1500 + Math.random() * 1500;
+    logger.warn(`Slow query detected - ${delay.toFixed(0)}ms delay on findAll`);
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+
+  Tutorial.findAll({ where: condition, order: [['updatedAt', 'DESC']] })
     .then((data) => {
       logger.info(`${req.method} ${req.originalUrl} Fetched ${data.length} records`);
       logger.info(`${req.method} ${req.originalUrl} - Request Successful!!`);
@@ -173,7 +180,7 @@ exports.update = (req, res) => {
             req.params
           )} - Request Successful!!`
         );
-      
+
         res.send({ message: "Tutorial was updated successfully." });
       }
     })
@@ -244,76 +251,75 @@ exports.deleteAll = (req, res) => {
 
   // uncomment this for custom instrumentation
   // Start a custom segment for bulk delete operation
-/*  newrelic.startSegment('deleteAllTutorials_custom', true, () => {
-    // Add custom attributes for the delete operation
-    newrelic.addCustomAttribute('operation_custom', 'bulkDelete');
-    newrelic.addCustomAttribute('requestPath_custom', req.path);
-    
-    const err = new Error(`Failed to Delete the tutorials`);
-    // Record custom event for delete attempt
-    newrelic.recordCustomEvent('BulkDeleteAttempt_custom', {
-      path: req.path,
-      url: req.url,
-      method: req.method,
-      timestamp: new Date().toISOString(),
-      error: err.message,
-      errorType: 'deliberate_error_custom',
-      requestPath: req.path,
-    });
-
-    // Enhanced error handling with New Relic
-    newrelic.noticeError(err, {
-      operation: 'bulkDelete_custom',
-      errorType: 'deliberate_error_custom',
-      requestPath: req.path,
-      timestamp: new Date().toISOString()
-    });
-  */
- 
-
-    logger.error(
-      `${req.method} ${req.originalUrl}- ${JSON.stringify(req.params)} - ${
-        err.message
-      }`
-    );
-    logger.error(
-     `${req.method} ${req.originalUrl} : Bulk delete failed!`,
-    );
-
-    res.status(500).send({
-      message: err.message || "Some error occurred while removing all tutorials.",
-    });
-    return;
- 
-    // });  // uncomment this for custom instrumentation
- 
-    // The code below is unreachable but kept for reference
-    Tutorial.destroy({
-      truncate: true,
-    })
-      .then((data) => {
-        logger.info(
-          `${req.method} ${req.originalUrl}- ${JSON.stringify(
-            req.params
-          )} - Request Successful!!`
-        );
-
-        res.send({
-          message: `${data.deletedCount} Tutorials were deleted successfully!`,
-        });
-      })
-      .catch((err) => {
-        logger.error(
-          `${req.method} ${req.originalUrl}- ${JSON.stringify(
-            req.params
-          )} - Error updating data`
-        );
-
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while removing all tutorials.",
-        });
+  /*  newrelic.startSegment('deleteAllTutorials_custom', true, () => {
+      // Add custom attributes for the delete operation
+      newrelic.addCustomAttribute('operation_custom', 'bulkDelete');
+      newrelic.addCustomAttribute('requestPath_custom', req.path);
+      
+      const err = new Error(`Failed to Delete the tutorials`);
+      // Record custom event for delete attempt
+      newrelic.recordCustomEvent('BulkDeleteAttempt_custom', {
+        path: req.path,
+        url: req.url,
+        method: req.method,
+        timestamp: new Date().toISOString(),
+        error: err.message,
+        errorType: 'deliberate_error_custom',
+        requestPath: req.path,
       });
+  
+      // Enhanced error handling with New Relic
+      newrelic.noticeError(err, {
+        operation: 'bulkDelete_custom',
+        errorType: 'deliberate_error_custom',
+        requestPath: req.path,
+        timestamp: new Date().toISOString()
+      });
+    */
+
+
+  logger.error(
+    `${req.method} ${req.originalUrl}- ${JSON.stringify(req.params)} - ${err.message
+    }`
+  );
+  logger.error(
+    `${req.method} ${req.originalUrl} : Bulk delete failed!`,
+  );
+
+  res.status(500).send({
+    message: err.message || "Some error occurred while removing all tutorials.",
+  });
+  return;
+
+  // });  // uncomment this for custom instrumentation
+
+  // The code below is unreachable but kept for reference
+  Tutorial.destroy({
+    truncate: true,
+  })
+    .then((data) => {
+      logger.info(
+        `${req.method} ${req.originalUrl}- ${JSON.stringify(
+          req.params
+        )} - Request Successful!!`
+      );
+
+      res.send({
+        message: `${data.deletedCount} Tutorials were deleted successfully!`,
+      });
+    })
+    .catch((err) => {
+      logger.error(
+        `${req.method} ${req.originalUrl}- ${JSON.stringify(
+          req.params
+        )} - Error updating data`
+      );
+
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while removing all tutorials.",
+      });
+    });
   // });
 };
 
@@ -336,7 +342,7 @@ exports.findAllPublished = (req, res) => {
 // Update view count
 exports.updateViewCount = (req, res) => {
   const id = req.params.id;
-  
+
   Tutorial.findByPk(id)
     .then(tutorial => {
       if (!tutorial) {
@@ -344,9 +350,9 @@ exports.updateViewCount = (req, res) => {
           message: `Tutorial with id=${id} not found`
         });
       }
-      
+
       return Tutorial.update(
-        { viewCount: tutorial.viewCount + 1 }, 
+        { viewCount: tutorial.viewCount + 1 },
         { where: { id: id } }
       );
     })
@@ -364,7 +370,7 @@ exports.updateViewCount = (req, res) => {
 exports.updateLikes = (req, res) => {
   const id = req.params.id;
   const { increment } = req.body;
-  
+
   Tutorial.findByPk(id)
     .then(tutorial => {
       if (!tutorial) {
@@ -372,10 +378,10 @@ exports.updateLikes = (req, res) => {
           message: `Tutorial with id=${id} not found`
         });
       }
-      
+
       const newCount = increment ? tutorial.likes + 1 : Math.max(0, tutorial.likes - 1);
       return Tutorial.update(
-        { likes: newCount }, 
+        { likes: newCount },
         { where: { id: id } }
       );
     })
@@ -398,7 +404,7 @@ exports.getCategories = (req, res) => {
 // Get tutorials by difficulty level
 exports.findByDifficulty = (req, res) => {
   const difficulty = req.params.difficulty;
-  
+
   Tutorial.findAll({ where: { difficulty: difficulty } })
     .then(data => {
       logger.info(`${req.method}: Fetched ${data.length} records with difficulty ${difficulty}`);
@@ -411,8 +417,8 @@ exports.findByDifficulty = (req, res) => {
     });
 };
 
-const categories = [{ 
-  "id": 1, 
+const categories = [{
+  "id": 1,
   "category": "Random"
 }, {
   "id": 2,

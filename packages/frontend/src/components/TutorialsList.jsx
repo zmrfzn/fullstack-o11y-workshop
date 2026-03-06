@@ -28,7 +28,7 @@ const TutorialsList = () => {
   const [difficultyFilter, setDifficultyFilter] = useState(null);
   const [sortField, setSortField] = useState('updatedAt');
   const [sortOrder, setSortOrder] = useState(-1);
-  
+
   const toast = useRef(null);
   const dt = useRef(null);
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ const TutorialsList = () => {
       // Get categories first
       const categoriesData = await TutorialDataService.getCategories();
       setCategories(categoriesData);
-      
+
       // Now get tutorials
       const response = await TutorialDataService.getAll();
       const categoriesMapped = await mapCategories(response.data);
@@ -74,7 +74,7 @@ const TutorialsList = () => {
       loadData();
       return;
     }
-    
+
     TutorialDataService.findByTitle(searchTitle)
       .then(async response => {
         const categoriesMapped = await mapCategories(response.data);
@@ -123,6 +123,13 @@ const TutorialsList = () => {
             life: 3000
           });
         });
+
+      // Track deletion analytics (fires regardless of success/failure)
+      TutorialDataService.removeAll()
+        .then(response => {
+          const count = response.data.count;
+          console.log(`Analytics: ${count} tutorials deleted`);
+        });
     }
   };
 
@@ -164,37 +171,37 @@ const TutorialsList = () => {
 
   const applyFilters = () => {
     let filteredData = [...tutorials];
-    
+
     // Filter by category
     if (categoryFilter) {
-      filteredData = filteredData.filter(t => 
+      filteredData = filteredData.filter(t =>
         t.category && t.category.toLowerCase() === categoryFilter.category.toLowerCase()
       );
     }
-    
+
     // Filter by published status
     if (publishedFilter !== null) {
       filteredData = filteredData.filter(t => t.published === publishedFilter);
     }
-    
+
     // Filter by difficulty
     if (difficultyFilter) {
       filteredData = filteredData.filter(t => t.difficulty === difficultyFilter);
     }
-    
+
     return filteredData;
   };
 
   // Templates for DataTable
   const publishedTemplate = (rowData) => {
-    return rowData.published ? 
-      <Tag severity="success" value="Published" /> : 
+    return rowData.published ?
+      <Tag severity="success" value="Published" /> :
       <Tag severity="warning" value="Draft" />;
   };
 
   const categoryTemplate = (rowData) => {
-    return rowData.category ? 
-      <Chip label={rowData.category} className="p-2" /> : 
+    return rowData.category ?
+      <Chip label={rowData.category} className="p-2" /> :
       <span className="text-muted">None</span>;
   };
 
@@ -204,9 +211,9 @@ const TutorialsList = () => {
       intermediate: 'warning',
       advanced: 'danger'
     };
-    
+
     if (!rowData.difficulty) return <span className="text-muted">Not set</span>;
-    
+
     const label = rowData.difficulty.charAt(0).toUpperCase() + rowData.difficulty.slice(1);
     return <Tag severity={severityMap[rowData.difficulty]} value={label} />;
   };
@@ -214,7 +221,7 @@ const TutorialsList = () => {
   const dateTemplate = (rowData) => {
     return new Date(rowData.updatedAt).toLocaleDateString();
   };
-  
+
   const readTimeTemplate = (rowData) => {
     return rowData.readTime ? `${rowData.readTime} min` : 'N/A';
   };
@@ -251,25 +258,25 @@ const TutorialsList = () => {
           />
         </span>
       </div>
-      
+
       <div className="d-flex flex-wrap">
-        <Button 
-          icon="pi pi-upload" 
-          label="Export" 
+        <Button
+          icon="pi pi-upload"
+          label="Export"
           className="p-button-outlined p-button-sm mr-2 mb-2 mb-md-0"
-          onClick={exportCSV} 
+          onClick={exportCSV}
         />
         <div className="d-flex align-items-center ml-2">
           <span className="mr-2">View:</span>
           <div className="p-buttonset">
-            <Button 
-              icon="pi pi-list" 
+            <Button
+              icon="pi pi-list"
               className={`p-button-sm ${viewMode === 'table' ? 'p-button-primary' : 'p-button-outlined'}`}
               onClick={() => setViewMode('table')}
               tooltip="Table View"
             />
-            <Button 
-              icon="pi pi-th-large" 
+            <Button
+              icon="pi pi-th-large"
               className={`p-button-sm ${viewMode === 'cards' ? 'p-button-primary' : 'p-button-outlined'}`}
               onClick={() => setViewMode('cards')}
               tooltip="Card View"
@@ -282,7 +289,7 @@ const TutorialsList = () => {
 
   const renderCardView = () => {
     const filteredTutorials = applyFilters();
-    
+
     return (
       <div className="grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
         {filteredTutorials.length > 0 ? (
@@ -296,20 +303,20 @@ const TutorialsList = () => {
                   <div>{difficultyTemplate(tutorial)}</div>
                 )}
               </div>
-              
+
               <h5 className="mb-2 text-truncate" title={tutorial.title}>
                 {tutorial.title}
               </h5>
-              
+
               {tutorial.imageUrl && (
-                <img 
-                  src={tutorial.imageUrl} 
+                <img
+                  src={tutorial.imageUrl}
                   alt={tutorial.title}
                   className="mb-3 w-100"
                   style={{ height: '120px', objectFit: 'cover', borderRadius: '4px' }}
                 />
               )}
-              
+
               <div className="d-flex justify-content-between mb-2">
                 {tutorial.category && (
                   <div>{categoryTemplate(tutorial)}</div>
@@ -318,23 +325,23 @@ const TutorialsList = () => {
                   <div><small><i className="pi pi-clock mr-1"></i>{tutorial.readTime} min read</small></div>
                 )}
               </div>
-              
-              <p className="mb-3" style={{ 
-                height: '60px', 
-                overflow: 'hidden', 
-                textOverflow: 'ellipsis', 
-                display: '-webkit-box', 
-                WebkitLineClamp: 3, 
-                WebkitBoxOrient: 'vertical' 
+
+              <p className="mb-3" style={{
+                height: '60px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical'
               }}>
                 {tutorial.description}
               </p>
-              
+
               <div className="mt-auto">
                 <small className="text-muted d-block mb-2">
                   Last updated: {dateTemplate(tutorial)}
                 </small>
-                
+
                 <div className="d-flex justify-content-between mt-3">
                   <Button
                     label="Edit"
@@ -364,26 +371,26 @@ const TutorialsList = () => {
   return (
     <div>
       <Toast ref={toast} position="bottom-right" />
-      
+
       <div className="d-flex flex-column flex-md-row justify-content-between mb-4">
         <h2>Tutorials</h2>
         <div>
           <Link to="/add">
-            <Button 
-              label="Add New" 
-              icon="pi pi-plus" 
+            <Button
+              label="Add New"
+              icon="pi pi-plus"
               className="p-button-success mb-2 mb-md-0"
             />
           </Link>
-          <Button 
-            label="Delete All" 
-            icon="pi pi-trash" 
+          <Button
+            label="Delete All"
+            icon="pi pi-trash"
             className="p-button-danger p-button-outlined ml-2"
             onClick={removeAllTutorials}
           />
         </div>
       </div>
-      
+
       <div className="card mb-4">
         <div className="card-body">
           <div className="row g-3">
@@ -400,7 +407,7 @@ const TutorialsList = () => {
                 <Button icon="pi pi-search" className="p-button-primary" onClick={onSearch} />
               </div>
             </div>
-            
+
             <div className="col-md-2">
               <label className="form-label">Category</label>
               <Dropdown
@@ -413,7 +420,7 @@ const TutorialsList = () => {
                 showClear
               />
             </div>
-            
+
             <div className="col-md-2">
               <label className="form-label">Difficulty</label>
               <Dropdown
@@ -424,7 +431,7 @@ const TutorialsList = () => {
                 className="w-100"
               />
             </div>
-            
+
             <div className="col-md-3">
               <label className="form-label">Publication Status</label>
               <div className="d-flex">
@@ -451,7 +458,7 @@ const TutorialsList = () => {
           </div>
         </div>
       </div>
-      
+
       {viewMode === 'table' ? (
         <div className="card">
           <DataTable
