@@ -1,0 +1,35 @@
+{
+    "name": "PERN New Relic Workshop",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/workspaces/pern-newrelic",
+    "features": {},
+    "postCreateCommand": "bash .devcontainer/setup.sh",
+    "forwardPorts": [
+        80,
+        8080
+    ],
+    "portsAttributes": {
+        "80": {
+            "label": "Frontend (React)",
+            "onAutoForward": "notify",
+            "visibility": "public"
+        },
+        "8080": {
+            "label": "Backend (Node/Express)",
+            "onAutoForward": "notify",
+            "visibility": "public"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash"
+            },
+            "extensions": [
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode"
+            ]
+        }
+    }
+}

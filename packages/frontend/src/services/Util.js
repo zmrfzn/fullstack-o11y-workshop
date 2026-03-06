@@ -1,15 +1,16 @@
 /* eslint-disable array-callback-return */
 
 import TutorialService from "./TutorialService";
+import Logger from "./Logger";
 
 const mapCategories = async (tutorials) => {
   let categories = await getCategoriesFromCache();
 
   const updatedTutorials = tutorials.map((f) => {
     if (f.category) {
-      let id = f.category;
-      const matchedCategory = categories.find((c) => c.id == id);
-      f.category = matchedCategory ? matchedCategory.category : `Unknown (${id})`;
+      let category = f.category;
+      const matchedCategory = categories.find((c) => c.id == category);
+      f.category = matchedCategory ? matchedCategory.category : `Unknown (${category})`;
     }
     return f;
   });
@@ -59,7 +60,7 @@ const formatDifficultyLevel = (difficulty) => {
 };
 
 const setCategories = async (data) => {
-  console.log(`Setting categories cache`);
+  Logger.info(`Setting categories cache`);
 
   const expiry = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
   const cache = {
@@ -70,7 +71,8 @@ const setCategories = async (data) => {
 }
 
 const getCategoriesFromCache = async () => {
-  console.log(`Getting categories from cache`);
+  Logger.info(`Getting categories from cache`);
+  window.newrelic.log('Getting categories from cache', {level: 'info'});
 
   const item = localStorage.getItem('categories');
   
@@ -80,7 +82,7 @@ const getCategoriesFromCache = async () => {
       const response = await TutorialService.getCategories();
       return response;
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      Logger.error("Error fetching categories:", error);
       return []; // Return empty array as fallback
     }
   }
@@ -89,7 +91,7 @@ const getCategoriesFromCache = async () => {
     const parsedItem = JSON.parse(item);
     return JSON.parse(parsedItem.data);
   } catch (error) {
-    console.error("Error parsing categories cache:", error);
+    Logger.error("Error parsing categories cache:", error);
     return [];
   }
 }
@@ -98,7 +100,7 @@ const isCategoriesValid = async () => {
   const item = localStorage.getItem('categories');
 
   if (!item) {
-    console.log('Categories cache not found');
+    Logger.info('Categories cache not found');
     return false;
   }
 
@@ -106,10 +108,10 @@ const isCategoriesValid = async () => {
     const parsedItem = JSON.parse(item);
     const isValid = parsedItem && parsedItem.expiry && Date.now() < parsedItem.expiry;
     
-    console.log(`Categories cache is ${isValid ? 'valid' : 'expired'}`);
+    Logger.info(`Categories cache is ${isValid ? 'valid' : 'expired'}`);
     return isValid;
   } catch (error) {
-    console.error("Error checking categories cache validity:", error);
+    Logger.error("Error checking categories cache validity:", error);
     return false;
   }
 }

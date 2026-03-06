@@ -7,6 +7,8 @@ import './index.css'
 
 import packageJSON from './../package.json'
 
+console.info("packageJSON", packageJSON);
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <App />

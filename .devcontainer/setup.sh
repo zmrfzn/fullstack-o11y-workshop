@@ -1,0 +1,52 @@
+#!/bin/bash
+set -euo pipefail
+
+echo "============================================"
+echo " 🚀 Setting up PERN Workshop Environment"
+echo "============================================"
+
+# ---- 1. Install dependencies ----
+echo "📦 Installing root dependencies..."
+npm install
+
+echo "📦 Installing backend dependencies..."
+npm run install:backend
+
+echo "📦 Installing frontend dependencies..."
+npm run install:frontend
+
+# ---- 2. Wait for PostgreSQL to be ready ----
+echo "⏳ Waiting for PostgreSQL..."
+until pg_isready -h localhost -p 5432 -U postgres > /dev/null 2>&1; do
+  sleep 1
+done
+echo "✅ PostgreSQL is ready!"
+
+# ---- 3. Create a monitoring user for New Relic (pre-provision) ----
+PGPASSWORD=root psql -h localhost -U postgres -d DevRel -c "
+  DO \$\$
+  BEGIN
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'new_relic') THEN
+      CREATE ROLE new_relic WITH LOGIN PASSWORD 'instruqt';
+      GRANT CONNECT ON DATABASE \"DevRel\" TO new_relic;
+      GRANT pg_monitor TO new_relic;
+    END IF;
+  END
+  \$\$;
+" 2>/dev/null || true
+
+# ---- 4. Initialize database (migrations + seeds) ----
+echo "🗄️  Initializing database..."
+cd packages/backend
+npx sequelize-cli db:migrate
+npx sequelize-cli db:seed:all
+cd ../..
+
+echo ""
+echo "============================================"
+echo " ✅ Workshop environment is ready!"
+echo ""
+echo " Start both services:  npm start"
+echo " Start backend only:   npm run start:backend"
+echo " Start frontend only:  npm run start:frontend"
+echo "============================================"

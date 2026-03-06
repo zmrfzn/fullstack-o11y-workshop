@@ -1,5 +1,7 @@
 const logger = require("./app/logger");
-
+const fs = require("fs");
+const https = require("https");
+const path = require("path");
 
 const express = require("express");
 const cors = require("cors");
@@ -63,11 +65,41 @@ app.use((req, res, next) => {
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
-try {
-  app.listen(PORT, () => {
-    logger.info(`Server is running on port ${PORT}.`);
-  });
-  
-} catch (error) {
-  console.error(error);
+const HTTPS_PORT = process.env.HTTPS_PORT || 8443;
+const USE_HTTPS = process.env.USE_HTTPS === 'true';
+
+if (USE_HTTPS) {
+  // SSL Configuration
+  const sslOptions = {
+    key: fs.readFileSync(path.join(__dirname, 'certs', 'localhost+2-key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, 'certs', 'localhost+2.pem'))
+  };
+
+  try {
+    // Start HTTPS server
+    https.createServer(sslOptions, app).listen(HTTPS_PORT, () => {
+      logger.info(`HTTPS Server is running on port ${HTTPS_PORT}.`);
+      logger.info(`Visit https://localhost:${HTTPS_PORT} for secure connection`);
+    });
+    
+    // Optionally start HTTP server for redirects
+    app.listen(PORT, () => {
+      logger.info(`HTTP Server is running on port ${PORT}.`);
+      logger.info(`Visit http://localhost:${PORT} for regular connection`);
+    });
+    
+  } catch (error) {
+    logger.error('Error starting HTTPS server:', error);
+    process.exit(1);
+  }
+} else {
+  // Standard HTTP server
+  try {
+    app.listen(PORT, () => {
+      logger.info(`Server is running on port ${PORT}.`);
+    });
+    
+  } catch (error) {
+    console.error(error);
+  }
 }

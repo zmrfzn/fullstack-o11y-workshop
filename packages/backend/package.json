@@ -7,6 +7,8 @@
     "start": "npx env-cmd -f ./.env node server",
     "start:prod": "npx env-cmd -f ./.env node -r newrelic server",
     "start:nr": "npx env-cmd -f ./.env node -r newrelic server",
+    "start:secure": "npx env-cmd -f ./.env cross-env USE_HTTPS=true node server",
+    "start:secure:prod": "npx env-cmd -f ./.env cross-env USE_HTTPS=true node -r newrelic server",
     "load": "npx load-generator",
     "initialize": "npx sequelize-cli db:create && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -32,6 +34,7 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "env-cmd": "^10.1.0",
     "sequelize-cli": "^6.6.0"
   }
