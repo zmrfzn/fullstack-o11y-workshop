@@ -1,99 +1,71 @@
-import { Link, useLocation } from 'react-router-dom';
-import { Sidebar } from 'primereact/sidebar';
-import { Button } from 'primereact/button';
-import { useState } from 'react';
-import PropTypes from 'prop-types';
-import viteLogo from '/vite.svg';
-import nrLogo from '/new_relic_logo_horizontal.png';
+import React, { useState } from 'react';
+import { Link, useLocation } from "react-router-dom";
+import 'primeicons/primeicons.css';
 
 const MainLayout = ({ children }) => {
-  const [visible, setVisible] = useState(false);
   const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const navItems = [
-    { path: '/tutorials', label: 'Tutorials', icon: 'pi pi-list' },
-    { path: '/add', label: 'Add New', icon: 'pi pi-plus' },
-    { path: '/published', label: 'Published', icon: 'pi pi-check-circle' },
-    { path: '/dashboard', label: 'Dashboard', icon: 'pi pi-chart-bar' },
-    { path: '/analytics', label: 'Analytics', icon: 'pi pi-chart-line' }
+    { path: '/tutorials', icon: 'pi pi-list', label: 'Tutorials' },
+    { path: '/add', icon: 'pi pi-plus', label: 'Add Tutorial' },
+    { path: '/published', icon: 'pi pi-check-circle', label: 'Published' },
+    { path: '/dashboard', icon: 'pi pi-chart-bar', label: 'Dashboard' },
+    { path: '/analytics', icon: 'pi pi-chart-line', label: 'Analytics' }
   ];
 
   return (
-    <div className="main-layout">
-      {/* Header */}
-      <header className="navbar navbar-expand navbar-dark bg-dark">
-        <Button 
-          icon="pi pi-bars" 
-          onClick={() => setVisible(true)}
-          className="p-button-rounded p-button-text p-button-plain text-white mr-2 d-md-none"
-        />
-        
-        <a href="/" className="navbar-brand d-flex align-items-center">
-          <img src={nrLogo} alt="Vite logo" height={40} />
-          <span className="pl-2">Tutorials Manager</span>
-        </a>
-        
-        <div className="navbar-nav mr-auto d-none d-md-flex">
-          {navItems.map(item => (
-            <li className="nav-item" key={item.path}>
-              <Link 
-                to={item.path} 
-                className={`nav-link d-flex align-items-center ${location.pathname === item.path ? 'active' : ''}`}
-              >
-                <i className={`${item.icon} mr-1`}></i>
-                {item.label}
-              </Link>
-            </li>
-          ))}
+    <div className="app-container slide-in-right">
+      {/* Sidebar */}
+      <aside className={`sidebar d-flex flex-column ${!isSidebarOpen ? 'd-none' : ''}`}>
+        <div className="p-4 d-flex align-items-center border-bottom border-dark border-opacity-25" style={{ height: '70px' }}>
+          <img src="https://newrelic.com/themes/custom/erno/assets/mediakit/new_relic_logo_vertical.png" alt="NR Logo" className="logo mr-2" style={{ height: '32px' }} />
+          <span className="font-weight-bold ml-2" style={{ color: 'var(--nr-text-primary)', fontSize: '1.2rem' }}>Workshop</span>
         </div>
-        
-        {/* <div className="ml-auto d-flex align-items-center">
-          <Button 
-            icon="pi pi-user" 
-            className="p-button-rounded p-button-text p-button-plain text-white"
-          />
-        </div> */}
-      </header>
 
-      {/* Mobile Sidebar */}
-      <Sidebar visible={visible} onHide={() => setVisible(false)} className="p-sidebar-md">
-        <div className="sidebar-header d-flex align-items-center justify-content-center mb-4">
-          <img src={viteLogo} alt="Logo" height={30} />
-          <h3 className="ml-2 mb-0">Tutorials Manager</h3>
+        <nav className="flex-grow-1 p-3">
+          <ul className="nav flex-column gap-2">
+            {navItems.map((item) => (
+              <li className="nav-item mb-2" key={item.path}>
+                <Link
+                  to={item.path}
+                  className={`nav-link d-flex align-items-center p-3 rounded hover-lift ${location.pathname === item.path ? 'bg-primary text-white' : 'text-secondary'}`}
+                  style={{ transition: 'all 0.2s', ...((location.pathname === item.path) ? { backgroundColor: 'var(--nr-primary)', color: '#fff' } : { color: 'var(--nr-text-secondary)' }) }}
+                >
+                  <i className={`${item.icon} mr-3`} style={{ fontSize: '1.2rem' }}></i>
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="p-4 border-top border-dark border-opacity-25 text-muted small">
+          <div>Built with PERN Stack</div>
+          <div className="font-weight-bold" style={{ color: 'var(--nr-primary)' }}>Instrumented by New Relic</div>
         </div>
-        
-        <div className="sidebar-menu">
-          {navItems.map(item => (
-            <Link 
-              key={item.path}
-              to={item.path} 
-              className={`sidebar-item d-flex align-items-center p-3 ${location.pathname === item.path ? 'active' : ''}`}
-              onClick={() => setVisible(false)}
-            >
-              <i className={`${item.icon} mr-3`}></i>
-              <span>{item.label}</span>
-            </Link>
-          ))}
-        </div>
-      </Sidebar>
+      </aside>
 
       {/* Main Content */}
-      <main className="container-fluid mt-4">
-        {children}
-      </main>
+      <main className="main-content d-flex flex-column">
+        {/* Top Header */}
+        <header className="px-4 py-3 border-bottom border-dark border-opacity-25 bg-dark d-flex align-items-center justify-content-between" style={{ height: '70px', backgroundColor: 'var(--nr-surface)' }}>
+          <h5 className="m-0 text-white font-weight-bold">PERN Stack Application</h5>
+          <div className="d-flex align-items-center">
+            <span className="badge badge-pill badge-primary mr-3 pulse-glow">Observability Active</span>
+          </div>
+        </header>
 
-      {/* Footer */}
-      <footer className="bg-light text-center text-muted py-3 mt-5">
-        <div className="container">
-          <p className="mb-0">© {new Date().getFullYear()} Tutorials Manager - PERN Stack Application</p>
+        {/* Content Area */}
+        <div className="flex-grow-1 p-4 overflow-auto fade-in-up" style={{ backgroundColor: 'var(--nr-bg-base)' }}>
+          <div className="container-fluid">
+            {children}
+          </div>
         </div>
-      </footer>
+
+      </main>
     </div>
   );
 };
 
-MainLayout.propTypes = {
-  children: PropTypes.node.isRequired
-};
-
-export default MainLayout; 
+export default MainLayout;

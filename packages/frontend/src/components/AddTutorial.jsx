@@ -31,7 +31,7 @@ const AddTutorial = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [tagArray, setTagArray] = useState([]);
-  
+
   const difficultyOptions = [
     { label: 'Beginner', value: 'beginner' },
     { label: 'Intermediate', value: 'intermediate' },
@@ -39,7 +39,7 @@ const AddTutorial = () => {
   ];
 
   useEffect(() => {
-    
+
     // Set New Relic page view name
     if (window.newrelic) {
       window.newrelic.setPageViewName('add-tutorial');
@@ -48,9 +48,9 @@ const AddTutorial = () => {
         timestamp: new Date().toISOString()
       });
     }
-    
+
     loadCategories();
-    
+
     return () => {
       /* Commenting out page actions
       // Clean up or send final metrics when component unmounts
@@ -74,11 +74,11 @@ const AddTutorial = () => {
       actionTrace.setAttribute('component', 'AddTutorial');
     }
     */
-    
+
     try {
       const response = await TutorialDataService.getCategories();
       setCategories(response);
-      
+
       /* Commenting out custom spans and traces
       if (window.newrelic) {
         window.newrelic.addToTrace({
@@ -125,7 +125,7 @@ const AddTutorial = () => {
         }
       }
       */
-      
+
       console.error("Error loading categories:", error);
       toast.current.show({
         severity: 'error',
@@ -139,7 +139,7 @@ const AddTutorial = () => {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setTutorial({ ...tutorial, [name]: value });
-    
+
     /* Commenting out page actions
     // Track significant field changes
     if (name === 'title' || name === 'description') {
@@ -156,7 +156,7 @@ const AddTutorial = () => {
 
   const handleNumberChange = (name, value) => {
     setTutorial({ ...tutorial, [name]: value });
-    
+
     /* Commenting out page actions
     if (window.newrelic) {
       window.newrelic.addPageAction('field_updated', {
@@ -170,8 +170,8 @@ const AddTutorial = () => {
 
   const onCategoryChange = (event) => {
     setSelectedCategory(event.value);
-    setTutorial({...tutorial, 'category': event.value.id});
-    
+    setTutorial({ ...tutorial, 'category': event.value.id });
+
     /* Commenting out page actions
     if (window.newrelic) {
       window.newrelic.addPageAction('category_selected', {
@@ -182,10 +182,10 @@ const AddTutorial = () => {
     }
     */
   };
-  
+
   const onDifficultyChange = (event) => {
-    setTutorial({...tutorial, 'difficulty': event.value});
-    
+    setTutorial({ ...tutorial, 'difficulty': event.value });
+
     /* Commenting out page actions
     if (window.newrelic) {
       window.newrelic.addPageAction('difficulty_selected', {
@@ -195,11 +195,11 @@ const AddTutorial = () => {
     }
     */
   };
-  
+
   const onTagsChange = (tags) => {
     setTagArray(tags);
-    setTutorial({...tutorial, 'tags': tags.join(',')});
-    
+    setTutorial({ ...tutorial, 'tags': tags.join(',') });
+
     /* Commenting out page actions
     if (window.newrelic) {
       window.newrelic.addPageAction('tags_updated', {
@@ -220,7 +220,7 @@ const AddTutorial = () => {
       });
     }
     */
-    
+
     navigate("/tutorials");
   };
 
@@ -232,7 +232,7 @@ const AddTutorial = () => {
         detail: 'Title is required',
         life: 3000
       });
-      
+
       /* Commenting out page actions
       if (window.newrelic) {
         window.newrelic.addPageAction('validation_error', {
@@ -242,12 +242,12 @@ const AddTutorial = () => {
         });
       }
       */
-      
+
       return;
     }
-    
+
     setProcessing(true);
-    
+
     // Start a New Relic custom trace segment for tutorial creation
     // uncomment this for custom instrumentation
     /* let actionTrace;
@@ -265,7 +265,7 @@ const AddTutorial = () => {
         timestamp: new Date().toISOString()
       });
     } */ // uncomment this for custom instrumentation
-    
+
     const data = {
       title: tutorial.title,
       description: tutorial.description,
@@ -277,9 +277,9 @@ const AddTutorial = () => {
       imageUrl: tutorial.imageUrl,
       published: false
     };
-    
+
     const startTime = performance.now();
-    
+
     TutorialDataService.create(data)
       .then((response) => {
         const endTime = performance.now();
@@ -311,14 +311,14 @@ const AddTutorial = () => {
             actionTrace.save();
           }
         } */ // uncomment this for custom instrumentation
-        
+
         toast.current.show({
           severity: 'success',
           summary: 'Success',
           detail: 'Tutorial created successfully',
           life: 3000
         });
-        
+
         // Navigate to the edit page for the new tutorial
         navigate(`/tutorials/${response.data.id}`);
       })
@@ -356,16 +356,16 @@ const AddTutorial = () => {
             actionTrace.save();
           }
         } */ // uncomment this for custom instrumentation
-        
+
         console.error("Error creating tutorial:", error);
-        
+
         toast.current.show({
           severity: 'error',
           summary: 'Creation Failed',
           detail: 'Failed to create tutorial',
           life: 3000
         });
-        
+
         setProcessing(false);
       });
   };
@@ -373,11 +373,11 @@ const AddTutorial = () => {
   return (
     <div className="add-tutorial p-3">
       <Toast ref={toast} position="bottom-right" />
-      
+
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-start mb-4">
         <h2>Add New Tutorial</h2>
         <div className="mt-3 mt-md-0">
-          <ActionButtons 
+          <ActionButtons
             onCancel={handleCancel}
             onSave={saveTutorial}
             saveLabel="Create Tutorial"
@@ -387,27 +387,27 @@ const AddTutorial = () => {
           />
         </div>
       </div>
-      
-      <Card className="shadow-sm mb-4">
+
+      <div className="card shadow-sm mb-4 border-0 p-4">
         <div className="row">
-          <div className="col-md-8">
-            <div className="mb-3">
-              <label htmlFor="title" className="form-label">Title</label>
+          <div className="col-md-8 pr-md-5">
+            <div className="mb-4">
+              <label htmlFor="title" className="form-label text-secondary font-weight-bold">Title</label>
               <InputText
                 id="title"
                 name="title"
                 value={tutorial.title}
                 onChange={handleInputChange}
-                className="w-100"
+                className="w-100 p-inputtext-lg"
                 placeholder="E.g., Getting Started with React Hooks for Beginners"
                 required
               />
             </div>
-            
-            <div className="row">
+
+            <div className="row mb-4">
               <div className="col-md-6">
-                <div className="mb-3">
-                  <label htmlFor="category" className="form-label">Category</label>
+                <div>
+                  <label htmlFor="category" className="form-label text-secondary font-weight-bold">Category</label>
                   <Dropdown
                     id="category"
                     value={selectedCategory}
@@ -419,10 +419,10 @@ const AddTutorial = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="col-md-6">
-                <div className="mb-3">
-                  <label htmlFor="author" className="form-label">Author</label>
+                <div>
+                  <label htmlFor="author" className="form-label text-secondary font-weight-bold">Author</label>
                   <InputText
                     id="author"
                     name="author"
@@ -434,11 +434,11 @@ const AddTutorial = () => {
                 </div>
               </div>
             </div>
-            
-            <div className="row">
+
+            <div className="row mb-4">
               <div className="col-md-6">
-                <div className="mb-3">
-                  <label htmlFor="difficulty" className="form-label">Difficulty Level</label>
+                <div>
+                  <label htmlFor="difficulty" className="form-label text-secondary font-weight-bold">Difficulty Level</label>
                   <Dropdown
                     id="difficulty"
                     value={tutorial.difficulty}
@@ -449,10 +449,10 @@ const AddTutorial = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="col-md-6">
-                <div className="mb-3">
-                  <label htmlFor="readTime" className="form-label">Read Time (minutes)</label>
+                <div>
+                  <label htmlFor="readTime" className="form-label text-secondary font-weight-bold">Read Time (minutes)</label>
                   <InputNumber
                     id="readTime"
                     value={tutorial.readTime}
@@ -464,9 +464,9 @@ const AddTutorial = () => {
                 </div>
               </div>
             </div>
-            
-            <div className="mb-3">
-              <label htmlFor="imageUrl" className="form-label">Image URL</label>
+
+            <div className="mb-4">
+              <label htmlFor="imageUrl" className="form-label text-secondary font-weight-bold">Image URL</label>
               <InputText
                 id="imageUrl"
                 name="imageUrl"
@@ -476,19 +476,19 @@ const AddTutorial = () => {
                 placeholder="E.g., https://example.com/images/tutorial-banner.jpg"
               />
               {tutorial.imageUrl && (
-                <div className="mt-2">
-                  <img 
-                    src={tutorial.imageUrl} 
-                    alt="Tutorial preview" 
-                    style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'cover' }} 
-                    className="rounded"
+                <div className="mt-3 text-center bg-dark p-2 rounded" style={{ border: '1px dashed var(--nr-border)' }}>
+                  <img
+                    src={tutorial.imageUrl}
+                    alt="Tutorial preview"
+                    style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'cover' }}
+                    className="rounded shadow-sm"
                   />
                 </div>
               )}
             </div>
-            
-            <div className="mb-3">
-              <label htmlFor="tags" className="form-label">Tags</label>
+
+            <div className="mb-4">
+              <label htmlFor="tags" className="form-label text-secondary font-weight-bold">Tags</label>
               <Chips
                 id="tags"
                 value={tagArray}
@@ -497,11 +497,11 @@ const AddTutorial = () => {
                 className="w-100"
                 placeholder="Add tags like 'javascript', 'react', 'frontend' and press Enter"
               />
-              <small className="text-muted">Press Enter after each tag</small>
+              <small className="text-muted mt-1 d-block"><i className="pi pi-info-circle mr-1"></i>Press Enter after each tag</small>
             </div>
-            
-            <div className="mb-3">
-              <label htmlFor="description" className="form-label">Description</label>
+
+            <div className="mb-4">
+              <label htmlFor="description" className="form-label text-secondary font-weight-bold">Description</label>
               <InputTextarea
                 id="description"
                 name="description"
@@ -514,29 +514,34 @@ const AddTutorial = () => {
               />
             </div>
           </div>
-          
+
           <div className="col-md-4">
-            <div className="card h-100 bg-light">
-              <div className="card-body">
-                <h5 className="card-title">Tutorial Guidelines</h5>
-                <hr />
-                <ul className="pl-3">
-                  <li className="mb-2">Choose a clear, descriptive title</li>
-                  <li className="mb-2">Select the most appropriate category</li>
-                  <li className="mb-2">Set an accurate difficulty level</li>
-                  <li className="mb-2">Estimate realistic reading time</li>
-                  <li className="mb-2">Use relevant tags to improve discoverability</li>
-                  <li className="mb-2">Add an image to make your tutorial visually appealing</li>
-                  <li className="mb-2">Write a comprehensive description</li>
+            <div className="card h-100 border-0 shadow-sm" style={{ backgroundColor: 'var(--nr-surface-hover)' }}>
+              <div className="card-body p-4">
+                <div className="d-flex align-items-center mb-3">
+                  <i className="pi pi-compass text-primary mr-2" style={{ fontSize: '1.5rem' }}></i>
+                  <h5 className="card-title m-0 font-weight-bold text-white">Guidelines</h5>
+                </div>
+                <hr className="border-secondary opacity-25" />
+                <ul className="pl-3 mt-4" style={{ color: 'var(--nr-text-secondary)', lineHeight: '1.8' }}>
+                  <li className="mb-2">Choose a <span className="text-white">clear, descriptive title</span></li>
+                  <li className="mb-2">Select the most <span className="text-white">appropriate category</span></li>
+                  <li className="mb-2">Set an accurate <span className="text-white">difficulty level</span></li>
+                  <li className="mb-2">Estimate <span className="text-white">realistic reading time</span></li>
+                  <li className="mb-2">Use relevant tags to <span className="text-white">improve discoverability</span></li>
+                  <li className="mb-2">Add an image to make your tutorial <span className="text-white">visually appealing</span></li>
+                  <li className="mb-2">Write a <span className="text-white">comprehensive description</span></li>
                 </ul>
-                <p className="mt-3 text-muted">
-                  After creation, you&apos;ll be redirected to the edit page where you can make further changes and publish the tutorial when ready.
-                </p>
+                <div className="mt-4 p-3 rounded" style={{ backgroundColor: 'rgba(0,0,0,0.2)', borderLeft: '3px solid var(--nr-primary)' }}>
+                  <p className="m-0 small text-muted">
+                    After creation, you&apos;ll be redirected to the edit page where you can make further changes and publish the tutorial when ready.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 };

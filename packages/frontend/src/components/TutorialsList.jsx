@@ -195,8 +195,8 @@ const TutorialsList = () => {
   // Templates for DataTable
   const publishedTemplate = (rowData) => {
     return rowData.published ?
-      <Tag severity="success" value="Published" /> :
-      <Tag severity="warning" value="Draft" />;
+      <span className="badge badge-pill badge-success mr-2">Published</span> :
+      <span className="badge badge-pill badge-warning mr-2 pulse-glow-warning">Draft</span>;
   };
 
   const categoryTemplate = (rowData) => {
@@ -287,81 +287,103 @@ const TutorialsList = () => {
     </div>
   );
 
+  const getCategoryColorClass = (categoryName) => {
+    const map = {
+      'Frontend': 'cat-1',
+      'Backend': 'cat-2',
+      'Database': 'cat-3',
+      'DevOps': 'cat-4',
+      'Mobile': 'cat-5',
+      'Testing': 'cat-6'
+    };
+    return map[categoryName] || 'cat-1';
+  };
+
   const renderCardView = () => {
     const filteredTutorials = applyFilters();
 
     return (
-      <div className="grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+      <div className="grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
         {filteredTutorials.length > 0 ? (
           filteredTutorials.map((tutorial) => (
-            <Card key={tutorial.id} className="shadow-sm h-100">
-              <div className="d-flex justify-content-between mb-3">
-                <div className="d-flex align-items-center">
-                  {publishedTemplate(tutorial)}
-                </div>
-                {tutorial.difficulty && (
-                  <div>{difficultyTemplate(tutorial)}</div>
-                )}
-              </div>
-
-              <h5 className="mb-2 text-truncate" title={tutorial.title}>
-                {tutorial.title}
-              </h5>
-
-              {tutorial.imageUrl && (
-                <img
-                  src={tutorial.imageUrl}
-                  alt={tutorial.title}
-                  className="mb-3 w-100"
-                  style={{ height: '120px', objectFit: 'cover', borderRadius: '4px' }}
-                />
+            <div key={tutorial.id} className="card h-100 position-relative hover-lift border-0 shadow-sm" style={{ cursor: 'pointer' }} onClick={() => viewTutorial(tutorial)}>
+              {tutorial.category && (
+                <div className={`category-indicator ${getCategoryColorClass(tutorial.category)}`}></div>
               )}
+              <div className="card-body d-flex flex-column p-4 pl-5">
+                <div className="d-flex justify-content-between mb-3 align-items-center">
+                  <div className="d-flex align-items-center">
+                    {publishedTemplate(tutorial)}
+                  </div>
+                  {tutorial.difficulty && (
+                    <div>{difficultyTemplate(tutorial)}</div>
+                  )}
+                </div>
 
-              <div className="d-flex justify-content-between mb-2">
-                {tutorial.category && (
-                  <div>{categoryTemplate(tutorial)}</div>
-                )}
-                {tutorial.readTime && (
-                  <div><small><i className="pi pi-clock mr-1"></i>{tutorial.readTime} min read</small></div>
-                )}
-              </div>
+                <h5 className="mb-2 text-truncate font-weight-bold" title={tutorial.title} style={{ color: 'var(--nr-text-primary)' }}>
+                  {tutorial.title}
+                </h5>
 
-              <p className="mb-3" style={{
-                height: '60px',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                display: '-webkit-box',
-                WebkitLineClamp: 3,
-                WebkitBoxOrient: 'vertical'
-              }}>
-                {tutorial.description}
-              </p>
-
-              <div className="mt-auto">
-                <small className="text-muted d-block mb-2">
-                  Last updated: {dateTemplate(tutorial)}
-                </small>
-
-                <div className="d-flex justify-content-between mt-3">
-                  <Button
-                    label="Edit"
-                    icon="pi pi-pencil"
-                    className="p-button-sm"
-                    onClick={() => viewTutorial(tutorial)}
+                {tutorial.imageUrl && (
+                  <img
+                    src={tutorial.imageUrl}
+                    alt={tutorial.title}
+                    className="mb-3 w-100"
+                    style={{ height: '140px', objectFit: 'cover', borderRadius: '6px' }}
                   />
-                  <Button
-                    icon="pi pi-trash"
-                    className="p-button-danger p-button-sm p-button-outlined"
-                    onClick={() => confirmDelete(tutorial)}
-                  />
+                )}
+
+                <div className="d-flex justify-content-between mb-3">
+                  {tutorial.category && (
+                    <span className="text-secondary small font-weight-bold">{tutorial.category.toUpperCase()}</span>
+                  )}
+                  {tutorial.readTime && (
+                    <span className="text-muted small"><i className="pi pi-clock mr-1"></i>{tutorial.readTime} min read</span>
+                  )}
+                </div>
+
+                <p className="mb-3 text-secondary" style={{
+                  height: '60px',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: 'vertical',
+                  fontSize: '0.9rem'
+                }}>
+                  {tutorial.description}
+                </p>
+
+                <div className="mt-auto pt-3 border-top border-dark border-opacity-25 d-flex justify-content-between align-items-center">
+                  <small className="text-muted">
+                    Updated: {dateTemplate(tutorial)}
+                  </small>
+                  <div>
+                    <Button
+                      icon="pi pi-trash"
+                      className="p-button-danger p-button-text p-button-sm p-0 m-0"
+                      onClick={(e) => { e.stopPropagation(); confirmDelete(tutorial); }}
+                      tooltip="Delete"
+                      tooltipOptions={{ position: 'top' }}
+                    />
+                  </div>
                 </div>
               </div>
-            </Card>
+            </div>
           ))
         ) : (
-          <div className="text-center col-12 p-5">
-            <i className="pi pi-search" style={{ fontSize: '2rem', color: '#ccc' }}></i>
-            <p className="mt-3">No tutorials found matching your criteria.</p>
+          <div className="col-12 text-center p-5 rounded" style={{ backgroundColor: 'var(--nr-surface)', border: '1px dashed var(--nr-border)' }}>
+            <i className="pi pi-search mb-3" style={{ fontSize: '3rem', color: 'var(--nr-text-muted)' }}></i>
+            <h4 className="text-white">No tutorials found</h4>
+            <p className="text-muted mb-4">Try adjusting your filters or search criteria.</p>
+            <Button label="Clear Filters" icon="pi pi-filter-slash" className="p-button-outlined" onClick={() => {
+              setSearchTitle("");
+              setGlobalFilter("");
+              setCategoryFilter(null);
+              setDifficultyFilter(null);
+              setPublishedFilter(null);
+              loadData();
+            }} />
           </div>
         )}
       </div>
