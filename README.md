@@ -1,127 +1,95 @@
-# PERN Stack Monorepo
+# 🔭 Full Stack Observability Workshop
 
-This is a monorepo for a PERN (PostgreSQL, Express, React, Node.js) stack application consisting of:
+**PERN Stack + New Relic — GitHub Codespaces Edition**
 
-- A React frontend with CRUD operations for tutorials
-- A Node.js/Express backend API with PostgreSQL database
+A hands-on workshop for learning New Relic observability with a real full-stack application built on PostgreSQL, Express, React, and Node.js.
 
-## Directory Structure
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/zmrfzn/fullstack-o11y-workshop?quickstart=1)
+
+## 🚀 Quick Start
+
+1. Click the **Open in GitHub Codespaces** button above
+2. Wait for the environment to build (~2–3 minutes)
+3. When you see `✅ Workshop environment is ready!` — you're good to go!
+4. Follow the workshop guide: **[WORKSHOP.md](WORKSHOP.md)**
+
+## 📋 Workshop Challenges
+
+| # | Challenge | Duration | What you'll learn |
+|---|-----------|----------|-------------------|
+| 1 | **APM** | ~15 min | Instrument a Node.js/Express API with Application Performance Monitoring |
+| 2 | **Infrastructure** | ~10 min | Install the New Relic Infrastructure agent to monitor the host |
+| 3 | **Log Forwarding** | ~10 min | Configure custom log forwarding via the Infrastructure agent |
+| 4 | **Browser** | ~15 min | Instrument a React SPA with Real User Monitoring |
+| 5 | **Synthetics** | ~15 min | Set up proactive uptime and functional monitoring |
+
+## 🏗️ Application Architecture
 
 ```
-pern/
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   React SPA     │────▶│  Express API    │────▶│   PostgreSQL    │
+│   (Port 80)     │     │  (Port 8080)    │     │   (Port 5432)   │
+│                 │     │                 │     │                 │
+│  Browser Agent  │     │   APM Agent     │     │  Auto-managed   │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+                              │
+                        Infrastructure
+                           Agent
+                        (Host metrics
+                         + Log fwd)
+```
+
+## 📁 Project Structure
+
+```
+├── .devcontainer/          # Codespaces configuration
+│   ├── devcontainer.json   # Container settings, port forwarding
+│   ├── docker-compose.yml  # App + Postgres services
+│   ├── Dockerfile          # Node 20 + tools
+│   └── setup.sh            # Auto-setup script
 ├── packages/
-│   ├── frontend/      # React frontend application
-│   └── backend/       # Express API server
-└── package.json       # Root package.json with workspace configuration
+│   ├── backend/            # Express API + Sequelize ORM
+│   │   ├── app/            # Controllers, routes, models
+│   │   ├── database/       # Sequelize config, migrations, seeds
+│   │   ├── newrelic.js     # New Relic APM configuration
+│   │   └── server.js       # Express server entry point
+│   └── frontend/           # React + Vite SPA
+│       ├── src/            # Components, services, layouts
+│       └── index.html      # Browser agent snippet goes here
+├── assets/                 # Workshop screenshot references
+├── WORKSHOP.md             # 📖 The workshop guide
+└── package.json            # Monorepo root (npm workspaces)
 ```
 
-## Setup Instructions
+## 🎯 Prerequisites
 
-### Prerequisites
+- A free [New Relic account](https://newrelic.com/signup)
+- A GitHub account with Codespaces access
 
-- Node.js (v16 or later)
-- npm 
-- PostgreSQL database
+## 🛠️ Running Locally (Without Codespaces)
 
-### Installation
+If you prefer to run locally:
 
-1. Install root dependencies:
+1. Install [Node.js 20+](https://nodejs.org/) and [PostgreSQL 14+](https://www.postgresql.org/)
+2. Clone the repo and install dependencies:
+   ```bash
+   git clone https://github.com/zmrfzn/fullstack-o11y-workshop.git
+   cd fullstack-o11y-workshop
+   npm install && npm run install:backend && npm run install:frontend
    ```
-   npm install
-   ```
-
-2. Install frontend and backend dependencies:
-   ```
-   npm run install:frontend
-   npm run install:backend
-   ```
-
-3. Configure environment variables:
-   - Copy `.env.example` to `.env.local` in the frontend package
-   - Copy `.env.example` to `.env` in the backend package
-   - Update the values as needed for your environment
-
-4. Initialize the database:
-   ```
+3. Configure PostgreSQL:
+   - Create a database named `DevRel`
+   - Update `packages/backend/.env` with your DB credentials
+4. Initialize and start:
+   ```bash
    npm run initialize:db
+   npm start
    ```
 
-### Running the Application
+## 📄 License
 
-Start both frontend and backend with a single command:
-```
-npm start
-```
+ISC
 
-Or run them separately:
-```
-npm run start:frontend
-npm run start:backend
-```
+---
 
-### Accessing the Application
-
-- Frontend: http://localhost:80
-- Backend API: http://localhost:8080/api
-
-## Development
-
-- Frontend code is in `packages/frontend`
-- Backend code is in `packages/backend`
-
-### Environment Variables
-
-#### Frontend (.env.local)
-```
-PORT=80
-NODE_ENV=development
-VITE_APP_API_URL='http://localhost:8080/api'
-```
-
-#### Backend (.env)
-```
-NODE_ENV=development
-PORT=8080
-DB_HOST=localhost
-DB_USER=postgres
-DB_PASSWORD=postgres
-DB_NAME=tutorial_db
-DB_PORT=5432
-```
-
-## References
-
-For detailed documentation, refer to the README.md files in each package directory.
-
-# PERN Stack Tutorial Application
-
-## How to Apply Database Changes
-
-After pulling these changes, you'll need to apply them to your database. Follow these steps:
-
-### Option 1: Using Sequelize CLI Directly
-
-```bash
-cd pern/packages/backend
-
-# Undo existing seeds
-npx sequelize-cli db:seed:undo:all
-
-# Undo existing migrations
-npx sequelize-cli db:migrate:undo:all
-
-# Apply the updated migrations
-npx sequelize-cli db:migrate
-
-# Apply the updated seeds
-npx sequelize-cli db:seed:all
-```
-
-### Option 2: Using the Initialize Script (if available)
-
-```bash
-cd pern/packages/backend
-npm run initialize
-```
-
-This will recreate the database with the proper schema and seed data.
+*Created by the Developer Relations team at New Relic • GitHub Codespaces Edition — March 2026*
