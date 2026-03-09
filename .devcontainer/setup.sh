@@ -47,6 +47,19 @@ npx sequelize-cli db:migrate
 npx sequelize-cli db:seed:all
 cd ../..
 
+# ---- 6. Start New Relic Infrastructure Agent (Option C fallback) ----
+echo "🚀 Starting New Relic Infrastructure Agent..."
+if [ -f /usr/bin/newrelic-infra ]; then
+  # Check if a license key is provided (either in file or ENV)
+  if grep -q "YOUR_LICENSE_KEY" /etc/newrelic-infra.yml && [ -z "${NR_LICENSE_KEY:-}" ]; then
+    echo "⚠️  NR_LICENSE_KEY not found. Agent will start but not report."
+  fi
+  sudo /usr/bin/newrelic-infra -config /etc/newrelic-infra.yml > /var/log/newrelic-infra-stdout.log 2>&1 &
+  echo "✅ Agent process started in background."
+else
+  echo "❌ New Relic Infrastructure Agent binary not found."
+fi
+
 echo ""
 echo "============================================"
 echo " ✅ Workshop environment is ready!"
