@@ -1,0 +1,4 @@
+license_key: YOUR_LICENSE_KEY
+custom_attributes:
+  environment: development
+  project: pern-newrelic

@@ -3,7 +3,9 @@
     "dockerComposeFile": "docker-compose.yml",
     "service": "app",
     "workspaceFolder": "/workspaces/pern-newrelic",
-    "features": {},
+    "features": {
+        "ghcr.io/devcontainers/features/systemd:1": {}
+    },
     "overrideCommand": false,
     "privileged": true,
     "postCreateCommand": "bash .devcontainer/setup.sh",
