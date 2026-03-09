@@ -4,8 +4,6 @@
     "service": "app",
     "workspaceFolder": "/workspaces/pern-newrelic",
     "features": {},
-    "overrideCommand": true,
-    "privileged": true,
     "postCreateCommand": "bash .devcontainer/setup.sh",
     "forwardPorts": [
         3000,
