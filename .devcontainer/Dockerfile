@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/javascript-node:20
+FROM mcr.microsoft.com/devcontainers/javascript-node:20-bookworm
 
 # Install postgresql-client so sequelize-cli db:create works
 RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
