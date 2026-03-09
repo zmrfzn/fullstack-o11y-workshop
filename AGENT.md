@@ -2,7 +2,7 @@
 
 This document provides essential context for any AI agent or assistant continuing work on this project. It summarizes the project's foundation, its evolution for cloud-native learning, and its current state.
 
-## �️ Project Foundation & Evolution
+## 🛠️ Project Foundation & Evolution
 - **Base Application**: Originally a standard PERN (PostgreSQL, Express, React, Node.js) tutorial app.
 - **Codespaces Rewrite**: The project has been heavily modified to be **"Codespaces-First"**. This involved:
     - **Monorepo Structure**: Transitioned to NPM Workspaces (root `package.json` orchestrates `packages/backend` and `packages/frontend`).
@@ -20,42 +20,39 @@ The project serves as a **New Relic Observability Workshop**. The goal is for st
 - **Observability**: Fully instrumented with New Relic (currently in the "Post-UI-Overhaul" state).
 
 ## ✅ Recent Major Work (March 2026)
-... (existing content) ...
+
+### 📈 Infrastructure Agent (Option A)
+- **Status**: **Fully Implemented** on branch `workshop-polish`.
+- **Implementation**: Enabled `systemd` in the container via the official Dev Container feature (`ghcr.io/devcontainers/features/systemd:1`).
+- **Dockerfile**: Updated to install `newrelic-infra` on **Debian** with dynamic architecture detection (`arm64`/`amd64`).
+- **Configuration**: Created `newrelic-infra.yml` in the root (copied to `/etc/` in the container).
+- **Mandatory Flags**: Set `"overrideCommand": false` and `"privileged": true` in `devcontainer.json` to allow `systemd` to run as PID 1.
+- **Troubleshooting**: Encountered registry issues with `ghcr.io` locally; prioritized functionality for GitHub Codespaces.
 
 ### 🎨 UI/UX Overhaul
 - **Dark Theme**: Implemented a New Relic-inspired dark theme using CSS variables (`theme.css`) and custom animations (`animations.css`).
 - **Main Layout**: Rewrote `MainLayout.jsx` with a collapsible sidebar and premium header.
-- **Component Redesigns**:
-    - `TutorialsList.jsx`: Added card/table toggle with glossy card effects and status pulses.
-    - `Dashboard.jsx` & `Analytics.jsx`: Full dark theme conversion for KPI cards and charts.
-    - Forms (`AddTutorial`, `Tutorial`): Modernized with floating labels and refined layouts.
-- **Typography**: switched to **Inter** (UI) and **JetBrains Mono** (Technical).
+- **Component Redesigns**: Card/table toggle with glossy card effects and status pulses in `TutorialsList.jsx`; dark theme KPI cards and charts in `Dashboard.jsx`.
+- **Typography**: Inter (UI) and JetBrains Mono (Technical).
 
-### 🛠️ Infrastructure & Setup
-- **Exposed DB**: Updated `.devcontainer/docker-compose.yml` to expose port `5432` to the host Mac machine.
-- **Documentation**: Overhauled `README.md` to include strict local verification steps and clear native setup instructions.
-- **Verification**: Verified that UI changes remain compatible with existing workshop scripts (e.g., Synthetics Scripted Browsers).
-
-### 🐛 Injected Workshop Bugs (For Students to Find)
-1. **Intermittent Latency**: Artificial delay in `GET /api/tutorials`.
-2. **Broken Delete-All**: 500 error due to undefined variable in backend.
+### 🐛 Injected Workshop Bugs (For Students)
+1. **Intermittent Latency**: Delay in `GET /api/tutorials`.
+2. **Broken Delete-All**: 500 error in backend (undefined variable).
 3. **External Timeout**: Aggressive timeout in `weather.controller.js`.
-4. **Analytics Crash**: TypeError when filtering categories with 0 results.
-5. **Silent Frontend Failure**: Missing `.catch()` in frontend `removeAll()` logic.
+4. **Analytics Crash**: TypeError on empty category results.
+5. **Silent Frontend Failure**: Missing `.catch()` in frontend `removeAll()`.
 
 ## 🚀 Environment & Handoff
-- **Default Port (Frontend)**: `80` (mapped to `3000` internally in `.env.local` to avoid sudo).
+- **Default Port (Frontend)**: `80` (mapped to `3000` internally in `.env.local`).
 - **Default Port (Backend)**: `8080`.
 - **Database**: `DevRel` database with `postgres/root` credentials.
-- **Remote Repos**: 
-    - Secondary: `zmrfzn/pern-newrelic`
-    - Primary (Workshop): `zmrfzn/fullstack-o11y-workshop`
-- **Branch**: `codespaces-workshop`
+- **Remote Repos**: `zmrfzn/fullstack-o11y-workshop`
+- **Branch**: `workshop-polish` (Active dev) / `codespaces-workshop` (Base)
 
 ## 📋 Next Steps for Incoming Agents
-- **Bug Refinement**: The user mentioned "other agents are working on adding deliberate bugs". Ensure any new bugs follow the established dark theme aesthetics (e.g., error states shouldn't break the layout).
-- **Content Expansion**: Additional tutorials or categories could be added to test the scrolling/grid responsiveness.
-- **O11y Calibration**: Verify that New Relic dashboards still render correctly with the new CSS classes, as some styles were heavily overridden.
+- **Testing**: Rebuild the Dev Container in GitHub Codespaces to verify the Infrastructure Agent service (`systemctl status newrelic-infra`).
+- **License Calibration**: Ensure `newrelic-infra.yml` or `NR_LICENSE_KEY` environment variables are properly handled.
+- **O11y Calibration**: Verify that New Relic dashboards still render correctly with the new CSS classes.
 
 ---
-*Generated by Antigravity Agent • March 2026*
+*Updated by Gemini CLI • March 9, 2026*

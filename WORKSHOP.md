@@ -167,29 +167,61 @@ Head to **[New Relic](https://one.newrelic.com/) → APM & Services**. You shoul
 
 New Relic Infrastructure monitoring offers flexible, dynamic observability for your entire infrastructure. It enables you to track the health and performance of hosts — whether physical machines, VMs, or containers.
 
-In this challenge, you will install the Infrastructure agent using the **New Relic Guided Install** method, which is the recommended and fastest way to get started.
+In this challenge, you will manually install the Infrastructure agent — the same steps you'd run on any Linux host in production.
 
 > [!TIP]
 > You do **not** need to stop the servers from Challenge 1. Keeping them running will continue to generate APM data while we set up Infrastructure monitoring!
 
-### Step 1 – Use the Guided Install
+### Step 1 – Configure your license key
 
-1. Go to the [New Relic Infrastructure guided install page](https://docs.newrelic.com/docs/infrastructure/choose-infra-install-method/).
-2. Select your **data center region** (US or EU) to get the correct install command.
-3. Copy the **guided install CLI command** provided for your region. It will look similar to:
+Create the agent configuration file with your New Relic license key:
 
-   ```bash
-   curl -Ls https://download.newrelic.com/install/newrelic-cli/scripts/install.sh | bash && sudo NEW_RELIC_API_KEY=<YOUR_LICENSE_KEY> NEW_RELIC_ACCOUNT_ID=<YOUR_ACCOUNT_ID> /usr/local/bin/newrelic install
-   ```
-   Replace `<YOUR_LICENSE_KEY>` and `<YOUR_ACCOUNT_ID>` with your actual New Relic credentials.
+```bash
+sudo tee /etc/newrelic-infra.yml > /dev/null <<EOF
+license_key: YOUR_LICENSE_KEY_HERE
+custom_attributes:
+  environment: codespaces
+  project: pern-newrelic
+EOF
+```
 
-4. **Paste and run the command in your terminal.**
-5. Follow any prompts to complete the installation.
+Replace `YOUR_LICENSE_KEY_HERE` with your actual New Relic license key (found under **Profile → API Keys → License key**).
+
+### Step 2 – Add the New Relic APT repository
+
+```bash
+curl -s https://download.newrelic.com/infrastructure_agent/gpg/newrelic-infra.gpg \
+  | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/newrelic-infra.gpg
+
+CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2)
+echo "deb [arch=$(dpkg --print-architecture)] https://download.newrelic.com/infrastructure_agent/linux/apt $CODENAME main" \
+  | sudo tee /etc/apt/sources.list.d/newrelic-infra.list
+```
+
+### Step 3 – Install and start the agent
+
+```bash
+sudo apt-get update && sudo apt-get install -y newrelic-infra
+
+sudo /usr/bin/newrelic-infra > /tmp/newrelic-infra.log 2>&1 &
+```
 
 > [!NOTE]
-> The guided install will automatically detect your environment and install the Infrastructure agent. If you are on a FedRAMP server, use the manual install instructions instead.
+> In production you would use `systemctl enable --now newrelic-infra`. In Codespaces we run the binary directly — same process, different lifecycle manager.
 
-### Step 2 – Verify Infrastructure data in New Relic
+### Step 4 – Verify the agent is running
+
+```bash
+# Confirm the process is alive
+ps aux | grep newrelic-infra
+
+# Tail the log to see live output
+tail -f /tmp/newrelic-infra.log
+```
+
+Press `Ctrl+C` to stop tailing the log when you're done.
+
+### Step 5 – Verify Infrastructure data in New Relic
 
 Head to your New Relic account → **Infrastructure → Hosts**. You should see a new host entity appearing.
 
