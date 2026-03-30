@@ -21,7 +21,7 @@ tabs:
   hostname: pern-o11y
   workdir: /root/pern-newrelic/packages/backend
   cmd: bash -c "npm start"
-- id: frontendterm
+- id: solhyi1xuula
   title: Frontend Terminal
   type: terminal
   hostname: pern-o11y

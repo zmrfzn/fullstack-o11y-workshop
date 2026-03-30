@@ -24,13 +24,13 @@ tabs:
   type: terminal
   hostname: pern-o11y
   workdir: /root/pern-newrelic/packages/backend
-  shell: /bin/bash
+  cmd: /bin/bash
 - id: lsj6hxgpc6wz
   title: Terminal 2
   type: terminal
   hostname: pern-o11y
   workdir: /root/pern-newrelic/packages/backend
-  shell: /bin/bash
+  cmd: /bin/bash
 - id: kvmzlyh1tgo1
   title: Editor
   type: code

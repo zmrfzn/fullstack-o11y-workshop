@@ -3,15 +3,9 @@ virtualmachines:
 - name: pern-o11y
   image: devrel-instruqt-images/devrel-base-um
   machine_type: e2-standard-2
-  allow_stopping_for_update: true
   environment:
     NODE_ENV: development
-  ports:
-  - name: app
-    port: 8080
-    host_port: 8080
-    protocol: TCP
-  - name: postgres
-    port: 5432
-    host_port: 5432
-    protocol: TCP
+  allow_external_ingress:
+  - http
+  - https
+  - high-ports

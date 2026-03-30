@@ -3,7 +3,8 @@ slug: infra-and-logs
 id: djsfgrcp6uvi
 type: challenge
 title: Challenge 2 — Infrastructure Monitoring + Custom Logs
-teaser: Install the Infrastructure agent and send custom logs — one guided install covers both.
+teaser: Install the Infrastructure agent and send custom logs — one guided install
+  covers both.
 notes:
 - type: text
   contents: |-

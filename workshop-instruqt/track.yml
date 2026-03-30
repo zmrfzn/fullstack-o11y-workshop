@@ -1,6 +1,6 @@
 slug: pern-o11y-quickstart
-id: pern-o11y-quickstart
-title: "Full Stack Observability with New Relic"
+id: hv5fvvibh6hq
+title: Full Stack Observability with New Relic
 teaser: Instrument a PERN stack app end-to-end and hunt down real bugs using telemetry.
 description: |-
   ## What you'll learn
@@ -28,17 +28,17 @@ description: |-
   ### Created by the New Relic Developer Relations team.
 icon: https://newrelic.com/themes/custom/erno/assets/mediakit/new_relic_logo_vertical.png
 tags:
-  - apm
-  - infrastructure
-  - logs
-  - browser
-  - synthetics
-  - javascript
-  - fullstack-o11y
-  - bug-hunt
+- infrastructure
+- fullstack-o11y
+- bug-hunt
+- javascript
+- apm
+- synthetics
+- logs
+- browser
 owner: newrelic
 developers:
-  - zfouzan@newrelic.com
+- zfouzan@newrelic.com
 show_timer: true
 idle_timeout: 1200
 timelimit: 4200
@@ -48,6 +48,8 @@ lab_config:
   feedback_recap_enabled: true
   feedback_tab_enabled: false
   loadingMessages: true
+  hideStopButton: false
   default_layout: AssignmentRight
   default_layout_sidebar_size: 33
-  hideStopButton: false
+checksum: "131615694124724506"
+enhanced_loading: false
