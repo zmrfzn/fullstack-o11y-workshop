@@ -74,6 +74,10 @@ cd /root/pern-newrelic/packages/backend
 npx sequelize-cli db:migrate
 npx sequelize-cli db:seed:all
 
+# --- Build React frontend (served as static files from Express) ---
+cd /root/pern-newrelic
+npm run build:frontend
+
 echo "============================================"
 echo " Workshop environment is ready!"
 echo " Working directory: /root/pern-newrelic"

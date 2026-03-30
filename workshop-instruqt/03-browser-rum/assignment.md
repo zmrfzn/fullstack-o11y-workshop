@@ -17,13 +17,8 @@ notes:
 
     You add the New Relic Browser agent by pasting a JavaScript snippet into your app's `<head>`. That's it.
 
-    In this challenge you will wire up the React frontend and instrument it with the Browser agent.
+    The React frontend is already built and served directly from the same Node.js server on port 8080 — no separate process, no CORS, no configuration needed.
 tabs:
-- id: frontend-terminal
-  title: Frontend Terminal
-  type: terminal
-  hostname: pern-o11y
-  workdir: /root/pern-newrelic/packages/frontend
 - id: node-terminal
   title: Node Terminal
   type: terminal
@@ -35,49 +30,30 @@ tabs:
   type: code
   hostname: pern-o11y
   path: /root/pern-newrelic/packages/frontend
+- id: terminal
+  title: Terminal
+  type: terminal
+  hostname: pern-o11y
+  workdir: /root/pern-newrelic
 - id: frontend-app
   title: Live App
   type: website
-  url: http://pern-o11y.${_SANDBOX_ID}.instruqt.io
+  url: http://pern-o11y.${_SANDBOX_ID}.instruqt.io:8080
 difficulty: basic
 timelimit: 720
 ---
 
-> The backend is starting automatically in [button label="Node Terminal"](tab-1). Wait for `Server is running on port 8080` before testing the app.
+> The backend is starting automatically in [button label="Node Terminal"](tab-0). Wait for `Server is running on port 8080` before opening the app.
 
 ---
 
-## Step 1 — Set the API URL for this environment
+## Step 1 — Verify the app is working
 
-The frontend needs to know the backend URL for this sandbox. Run in [button label="Frontend Terminal"](tab-0):
-
-```run
-echo "VITE_APP_API_URL=http://$HOSTNAME.$_SANDBOX_ID.instruqt.io:8080/api" > /root/pern-newrelic/packages/frontend/.env.local
-```
-
-Verify it looks correct:
-
-```run
-cat /root/pern-newrelic/packages/frontend/.env.local
-```
+Open the [button label="Live App"](tab-3) tab. You should see the tutorials app. Browse around — the frontend and API are both served from port 8080.
 
 ---
 
-## Step 2 — Start the frontend and verify the app
-
-In [button label="Frontend Terminal"](tab-0):
-
-```run
-npm start
-```
-
-Open the [button label="Live App"](tab-3) tab. You should see the tutorials app running. Browse around — add a tutorial, filter by category, visit the Analytics page.
-
-> If you see a blank screen or API errors, confirm the Node Terminal shows the backend running.
-
----
-
-## Step 3 — Get the Browser agent snippet
+## Step 2 — Get the Browser agent snippet
 
 In New Relic:
 
@@ -89,11 +65,11 @@ In New Relic:
 
 ---
 
-## Step 4 — Add the snippet to index.html
+## Step 3 — Add the snippet to index.html
 
-Open [button label="React Editor"](tab-2) and navigate to `index.html`.
+Open [button label="React Editor"](tab-1) and navigate to `index.html`.
 
-Paste the snippet inside the `<head>` section, before any other `<script>` tags:
+Paste the snippet inside the `<head>` section, as the **first child** before any other tags:
 
 ```html
 <head>
@@ -107,21 +83,31 @@ Save the file.
 
 ---
 
-## Step 5 — Restart the frontend and generate traffic
+## Step 4 — Rebuild the frontend
 
-Stop the frontend in [button label="Frontend Terminal"](tab-0) with `ctrl+c`, then restart:
+The React app is served as a pre-built bundle. After editing `index.html`, rebuild it so the changes take effect:
+
+In [button label="Terminal"](tab-2):
 
 ```run
-npm start
+npm run build:frontend
 ```
+
+Then restart the backend in [button label="Node Terminal"](tab-0) (`ctrl+c`, then):
+
+```run
+npm run start:nr
+```
+
+---
+
+## Step 5 — Generate traffic
 
 Open the [button label="Live App"](tab-3) tab and interact with the app:
 - Browse the tutorial list
 - Click into a tutorial
 - Visit the **Analytics** page
 - Try the **Remove All** button
-
-This generates the real user traffic that Browser monitoring will capture.
 
 ---
 
@@ -132,9 +118,9 @@ Go to **New Relic → Browser** and select your app.
 You should see:
 - **Page views** and load times
 - **Core web vitals** (LCP, FID, CLS)
-- **JS errors** (check the **Errors** section — there may already be some!)
-- **AJAX** calls to the backend
+- **JS errors** — check here, there may already be some lurking
+- **AJAX** calls to the backend API
 
-> It may take **2–3 minutes** for data to appear.
+> It may take **2–3 minutes** for the first data to appear.
 
-> **Checkpoint ✅** Confirm you can see your frontend app in New Relic Browser before moving on.
+> **Checkpoint ✅** Confirm your frontend app is visible in New Relic Browser before moving on.

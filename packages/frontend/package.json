@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "env-cmd -f  ./.env.local vite --host",
+    "build": "env-cmd -f ./.env.local vite build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {

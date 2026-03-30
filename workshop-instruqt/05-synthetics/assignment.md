@@ -25,12 +25,6 @@ tabs:
   hostname: pern-o11y
   workdir: /root/pern-newrelic/packages/backend
   cmd: npm run start:nr
-- id: frontend-terminal
-  title: Frontend Terminal
-  type: terminal
-  hostname: pern-o11y
-  workdir: /root/pern-newrelic/packages/frontend
-  cmd: npm start
 - id: url-terminal
   title: Terminal
   type: terminal
@@ -38,7 +32,7 @@ tabs:
 - id: frontend-app
   title: Live App
   type: website
-  url: http://pern-o11y.${_SANDBOX_ID}.instruqt.io
+  url: http://pern-o11y.${_SANDBOX_ID}.instruqt.io:8080
 difficulty: basic
 timelimit: 600
 ---

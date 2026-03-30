@@ -7,6 +7,9 @@ export default defineConfig({
   server: {
     port: 3000, // Codespaces forwards 3000 by default
     host: '0.0.0.0', // Listen on all interfaces for Codespaces
+    proxy: {
+      '/api': 'http://localhost:8080' // dev proxy so VITE_APP_API_URL=/api works in Codespaces
+    },
     allowedHosts: [
       'localhost',
       '127.0.0.1',

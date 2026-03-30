@@ -12,6 +12,7 @@
     "start:backend": "cd packages/backend && npm start",
     "install:frontend": "cd packages/frontend && npm install",
     "install:backend": "cd packages/backend && npm install",
+    "build:frontend": "cd packages/frontend && npm run build",
     "initialize:db": "cd packages/backend && npm run initialize"
   },
   "keywords": [

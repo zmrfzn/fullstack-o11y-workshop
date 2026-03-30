@@ -78,6 +78,15 @@ require("./app/routes/tutorial.routes")(app);
 const weather = require("./app/routes/weather.routes");
 app.use("/api/weather", weather);
 
+// Serve React frontend (production build — used in Instruqt and production)
+// In dev (Codespaces), the Vite dev server runs separately on port 3000.
+const frontendDist = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendDist));
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api/')) return next();
+  res.sendFile(path.join(frontendDist, 'index.html'));
+});
+
 // Block accidental 302 redirects for API routes (Codespaces/proxy safety)
 app.use((req, res, next) => {
   if (req.originalUrl.startsWith('/api/') && (res.statusCode === 302 || res.statusCode === 301)) {
