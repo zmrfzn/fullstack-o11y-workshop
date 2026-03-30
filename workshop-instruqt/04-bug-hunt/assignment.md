@@ -36,8 +36,10 @@ tabs:
   workdir: /root/pern-newrelic/packages/backend
 - id: frontend-app
   title: Live App
-  type: website
-  url: http://pern-o11y.${_SANDBOX_ID}.instruqt.io
+  type: service
+  hostname: pern-o11y
+  path: /
+  port: 8080
 difficulty: basic
 timelimit: 900
 ---

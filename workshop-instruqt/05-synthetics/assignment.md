@@ -31,8 +31,10 @@ tabs:
   hostname: pern-o11y
 - id: frontend-app
   title: Live App
-  type: website
-  url: http://pern-o11y.${_SANDBOX_ID}.instruqt.io:8080
+  type: service
+  hostname: pern-o11y
+  path: /
+  port: 8080
 difficulty: basic
 timelimit: 600
 ---
@@ -46,7 +48,7 @@ timelimit: 600
 You'll need this URL for both monitors. Run in [button label="Terminal"](tab-2):
 
 ```run
-echo http://$HOSTNAME.$_SANDBOX_ID.instruqt.io
+echo http://$HOSTNAME.$_SANDBOX_ID.instruqt.io:8080
 ```
 
 Copy the output. You'll use it in the steps below.
