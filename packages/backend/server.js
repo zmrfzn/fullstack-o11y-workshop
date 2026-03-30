@@ -21,7 +21,9 @@ const allowedOrigins = [
   'https://127.0.0.1:3000',
   // Codespaces and GitHub Codespaces preview URLs
   /https:\/\/.+-\d+\.app\.github\.dev$/,
-  /https:\/\/.+-\d+\.githubpreview\.dev$/
+  /https:\/\/.+-\d+\.githubpreview\.dev$/,
+  // Instruqt sandbox URLs
+  /https?:\/\/[^.]+\.[a-z0-9]+\.instruqt\.io(:\d+)?$/
 ];
 
 app.use(cors({
