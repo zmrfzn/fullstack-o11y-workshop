@@ -69,11 +69,6 @@ db.sequelize
     process.exit(1);
   });
 
-// simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to tutorial application." });
-});
-
 require("./app/routes/tutorial.routes")(app);
 
 // Serve React frontend (production build — used in Instruqt and production)

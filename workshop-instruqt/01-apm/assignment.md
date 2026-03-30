@@ -9,7 +9,7 @@ notes:
   contents: |-
     ## Application Performance Monitoring
 
-    New Relic APM automatically instruments your application — no code changes required beyond a single `require()`.
+    New Relic APM automatically instruments your application — no code changes required beyond installing the agent and a single `require()`.
 
     Once active, APM captures:
     - Every HTTP transaction (response times, throughput, errors)
@@ -24,11 +24,13 @@ tabs:
   type: terminal
   hostname: pern-o11y
   workdir: /root/pern-newrelic/packages/backend
+  shell: /bin/bash
 - id: lsj6hxgpc6wz
   title: Terminal 2
   type: terminal
   hostname: pern-o11y
   workdir: /root/pern-newrelic/packages/backend
+  shell: /bin/bash
 - id: kvmzlyh1tgo1
   title: Editor
   type: code
@@ -60,7 +62,7 @@ In [button label="Terminal 1"](tab-0), confirm Node is ready:
 node -v
 ```
 
-You should see **v20.x.x**.
+You should see **v24.x.x**.
 
 ---
 
@@ -84,24 +86,34 @@ Once verified, stop the server in [button label="Terminal 1"](tab-0) with `ctrl+
 
 ---
 
-## Step 3 — Configure the New Relic APM agent
+## Step 3 — Install the New Relic APM agent
 
-The `newrelic` npm package is already installed. You just need to configure it.
+In [button label="Terminal 1"](tab-0):
 
-Open [button label="Editor"](tab-2), then open `newrelic.js` and update these two values:
+```run
+npm install newrelic
+```
+
+---
+
+## Step 4 — Configure the agent
+
+Open [button label="Editor"](tab-2) and open `newrelic.js`. Update these two values:
 
 ```js
-app_name: ['your-app-name'],   // e.g. 'pern-tutorials-api'
+app_name: ['backend-api-server'],
 license_key: 'YOUR_LICENSE_KEY',
 ```
 
-> **Where to find your License Key:** New Relic UI → top-right profile menu → **API Keys** → look for the key with type **INGEST - LICENSE**.
+Replace `YOUR_LICENSE_KEY` with your **New Relic Ingest License key**.
+
+> **Where to find it:** New Relic UI → top-right profile menu → **API Keys** → key with type **INGEST - LICENSE**.
 
 Save the file.
 
 ---
 
-## Step 4 — Enable APM in server.js
+## Step 5 — Enable APM in server.js
 
 Open `server.js` in [button label="Editor"](tab-2) and add this as the **very first line**:
 
@@ -109,39 +121,41 @@ Open `server.js` in [button label="Editor"](tab-2) and add this as the **very fi
 const newrelic = require('newrelic');
 ```
 
-> This must be line 1, before any other `require()` calls, so the agent can hook into the Node.js runtime at startup.
+> This must be line 1, before any other `require()` calls, so the agent hooks into the Node.js runtime at startup.
 
 Save the file.
 
 ---
 
-## Step 5 — Start the server with APM and generate traffic
+## Step 6 — Start the server and generate traffic
 
-In [button label="Terminal 1"](tab-0), start the server with the New Relic agent:
+In [button label="Terminal 1"](tab-0), start the server:
 
 ```run
-npm run start:nr
+npm start
 ```
 
-In [button label="Terminal 2"](tab-1), run the load generator to produce traffic:
+In [button label="Terminal 2"](tab-1), run the load generator:
 
 ```run
 npm run load
 ```
 
-> Press `ctrl+c` in Terminal 2 to stop the load generator whenever you're ready to move on. Keep Terminal 1 running.
+> Press `ctrl+c` in [button label="Terminal 2"](tab-1) to stop the load generator when ready. Keep [button label="Terminal 1"](tab-0) running.
 
 ---
 
-## Step 6 — Verify APM data in New Relic
+## Step 7 — Verify APM data in New Relic
 
 Go to **[New Relic](https://one.newrelic.com) → APM & Services**.
 
-You should see your app entity appear within a few minutes. Click into it to explore:
+Your app (`backend-api-server`) should appear within a few minutes. Click into it to explore:
 - **Summary** — response time, throughput, error rate
 - **Transactions** — every API endpoint, slowest calls
 - **Distributed Tracing** — full request traces end-to-end
 
 > It may take **2–3 minutes** for data to appear after the agent first connects.
+
+![APM Summary](../assets/instruqt-APM-summary.png)
 
 > **Checkpoint ✅** Confirm you can see your app under APM & Services before moving to the next challenge.

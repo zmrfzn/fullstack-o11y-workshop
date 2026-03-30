@@ -9,7 +9,7 @@ exports.config = {
   /**
    * Array of application names.
    */
-  app_name: ['my-instruct-lab-apm-101-local'],
+  app_name: ['backend-api-server'],
   /**
    * Your New Relic license key.
    */

@@ -1,8 +1,8 @@
 ---
 slug: browser-rum
-id: browser-rum
+id: oodqta8recwv
 type: challenge
-title: "Challenge 3 — Frontend Monitoring with Browser RUM"
+title: Challenge 3 — Frontend Monitoring with Browser RUM
 teaser: Paste one JavaScript snippet and see exactly what your users experience.
 notes:
 - type: text
@@ -17,25 +17,27 @@ notes:
 
     You add the New Relic Browser agent by pasting a JavaScript snippet into your app's `<head>`. That's it.
 
-    The React frontend is already built and served directly from the same Node.js server on port 8080 — no separate process, no CORS, no configuration needed.
+    The React frontend is pre-built and served directly from the Node.js server on port 8080 — no separate process needed.
 tabs:
-- id: node-terminal
+- id: gteftsmnwvou
   title: Node Terminal
   type: terminal
   hostname: pern-o11y
   workdir: /root/pern-newrelic/packages/backend
-  cmd: npm run start:nr
-- id: react-editor
+  shell: /bin/bash
+  cmd: npm start
+- id: yfpmdw1dxn9a
   title: React Editor
   type: code
   hostname: pern-o11y
   path: /root/pern-newrelic/packages/frontend
-- id: terminal
+- id: ri3vxavghkry
   title: Terminal
   type: terminal
   hostname: pern-o11y
   workdir: /root/pern-newrelic
-- id: frontend-app
+  shell: /bin/bash
+- id: ltrjajdvrmpm
   title: Live App
   type: service
   hostname: pern-o11y
@@ -43,19 +45,14 @@ tabs:
   port: 8080
 difficulty: basic
 timelimit: 720
+enhanced_loading: null
 ---
 
-> The backend is starting automatically in [button label="Node Terminal"](tab-0). Wait for `Server is running on port 8080` before opening the app.
-
----
-
-## Step 1 — Verify the app is working
-
-Open the [button label="Live App"](tab-3) tab. You should see the tutorials app. Browse around — the frontend and API are both served from port 8080.
+> The backend is starting automatically in [button label="Node Terminal"](tab-0). Wait for `Server is running on port 8080`, then open the [button label="Live App"](tab-3) tab to confirm the app loads.
 
 ---
 
-## Step 2 — Get the Browser agent snippet
+## Step 1 — Get the Browser agent snippet
 
 In New Relic:
 
@@ -67,7 +64,7 @@ In New Relic:
 
 ---
 
-## Step 3 — Add the snippet to index.html
+## Step 2 — Add the snippet to index.html
 
 Open [button label="React Editor"](tab-1) and navigate to `index.html`.
 
@@ -85,9 +82,9 @@ Save the file.
 
 ---
 
-## Step 4 — Rebuild the frontend
+## Step 3 — Rebuild and restart
 
-The React app is served as a pre-built bundle. After editing `index.html`, rebuild it so the changes take effect:
+The React app is served as a pre-built bundle. Rebuild it so the snippet is included, then restart the backend.
 
 In [button label="Terminal"](tab-2):
 
@@ -95,15 +92,13 @@ In [button label="Terminal"](tab-2):
 npm run build:frontend
 ```
 
-Then restart the backend in [button label="Node Terminal"](tab-0) (`ctrl+c`, then):
+In [button label="Node Terminal"](tab-0), click the **reload icon (↺)** at the top-right of the terminal to restart the server.
 
-```run
-npm run start:nr
-```
+> Using the reload icon restarts the terminal's auto-start command. Do not use `ctrl+c` as it may not respond in all cases.
 
 ---
 
-## Step 5 — Generate traffic
+## Step 4 — Generate traffic
 
 Open the [button label="Live App"](tab-3) tab and interact with the app:
 - Browse the tutorial list
@@ -113,7 +108,7 @@ Open the [button label="Live App"](tab-3) tab and interact with the app:
 
 ---
 
-## Step 6 — Verify Browser data in New Relic
+## Step 5 — Verify Browser data in New Relic
 
 Go to **New Relic → Browser** and select your app.
 
@@ -122,6 +117,8 @@ You should see:
 - **Core web vitals** (LCP, FID, CLS)
 - **JS errors** — check here, there may already be some lurking
 - **AJAX** calls to the backend API
+
+![Browser App Dashboard](../assets/instruqt-browser-image.png)
 
 > It may take **2–3 minutes** for the first data to appear.
 
