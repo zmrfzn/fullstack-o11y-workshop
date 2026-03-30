@@ -10,77 +10,25 @@ done
 # Prevent auto-upgrades from holding the apt lock
 sudo systemctl stop unattended-upgrades apt-daily.timer apt-daily-upgrade.timer 2>/dev/null || true
 
-# --- Base tools ---
-sudo apt-get update -y
-sudo apt-get install -y git curl
-
 # --- PostgreSQL ---
+sudo apt-get update -y
 sudo apt-get install -y postgresql postgresql-contrib
 
-# Set postgres password and update auth method to md5
+# Set postgres password and switch auth method to md5
 sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'root';"
 sudo sed -i -e 's/peer/md5/g' -e 's/ident/md5/g' /etc/postgresql/*/main/pg_hba.conf
 sudo systemctl restart postgresql
 
-# --- Node.js 20 LTS ---
+# --- Node.js (upgrade to v24 LTS) ---
 sudo npm cache clean -f
 sudo npm install -g n
-sudo n 20
+sudo n 24
 hash -r
 
-# --- flog (fake log generator for log forwarding exercise) ---
+# --- flog (fake log generator for log forwarding challenge) ---
 curl -sL -o /tmp/flog.tar.gz \
   https://github.com/mingrammer/flog/releases/download/v0.4.3/flog_0.4.3_linux_amd64.tar.gz
 tar -xzf /tmp/flog.tar.gz -C /tmp/
 sudo mv /tmp/flog /usr/local/bin/flog
 sudo chmod +x /usr/local/bin/flog
 rm /tmp/flog.tar.gz
-
-# --- Clone workshop repo (instruqt-workshop branch) ---
-git clone --branch instruqt-workshop --depth 1 \
-  https://github.com/zmrfzn/fullstack-o11y-workshop.git \
-  /root/pern-newrelic
-
-cd /root/pern-newrelic
-
-# --- Provision env files ---
-cp packages/backend/.env.example packages/backend/.env
-cp packages/frontend/.env.example packages/frontend/.env.local
-
-# --- Install dependencies ---
-npm install
-npm run install:backend
-npm run install:frontend
-
-# --- Wait for PostgreSQL ---
-until pg_isready -h localhost -p 5432 -U postgres > /dev/null 2>&1; do
-    sleep 1
-done
-
-# --- Create NR monitoring user for DB OHI (pre-provisioned, optional) ---
-PGPASSWORD=root psql -h localhost -U postgres -c "
-  DO \$\$
-  BEGIN
-    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'new_relic') THEN
-      CREATE ROLE new_relic WITH LOGIN PASSWORD 'instruqt';
-      GRANT CONNECT ON DATABASE \"DevRel\" TO new_relic;
-      GRANT pg_monitor TO new_relic;
-    END IF;
-  END
-  \$\$;" 2>/dev/null || true
-
-# --- Run DB migrations and seed data ---
-cd /root/pern-newrelic/packages/backend
-npx sequelize-cli db:migrate
-npx sequelize-cli db:seed:all
-
-# --- Build React frontend (served as static files from Express) ---
-cd /root/pern-newrelic
-npm run build:frontend
-
-echo "============================================"
-echo " Workshop environment is ready!"
-echo " Working directory: /root/pern-newrelic"
-echo " Backend:  cd /root/pern-newrelic/packages/backend && npm run start:nr"
-echo " Frontend: cd /root/pern-newrelic/packages/frontend && npm start"
-echo "============================================"

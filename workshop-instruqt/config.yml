@@ -1,17 +1,13 @@
 version: "3"
 virtualmachines:
 - name: pern-o11y
-  image: nicholasjackson/ubuntu-bionic-java8
+  image: devrel-instruqt-images/devrel-base-um
   machine_type: e2-standard-2
   allow_stopping_for_update: true
   environment:
     NODE_ENV: development
   ports:
-  - name: frontend
-    port: 3000
-    host_port: 80
-    protocol: TCP
-  - name: backend
+  - name: app
     port: 8080
     host_port: 8080
     protocol: TCP

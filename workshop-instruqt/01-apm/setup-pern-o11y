@@ -1,0 +1,45 @@
+#!/bin/bash
+set -euxo pipefail
+
+export NODE_ENV=development
+
+# --- Clone workshop repo ---
+git clone --branch instruqt-workshop --depth 1 \
+  https://github.com/zmrfzn/fullstack-o11y-workshop.git \
+  /root/pern-newrelic
+
+cd /root/pern-newrelic
+
+# --- Provision env files ---
+cp packages/backend/.env.example packages/backend/.env
+cp packages/frontend/.env.example packages/frontend/.env.local
+
+# --- Install backend dependencies ---
+npm run install:backend
+
+# --- Wait for PostgreSQL to be ready ---
+until pg_isready -h localhost -p 5432 -U postgres > /dev/null 2>&1; do
+    sleep 1
+done
+
+# --- Create database, run migrations, seed data ---
+# npm run initialize = db:create && db:migrate && db:seed:all
+cd /root/pern-newrelic/packages/backend
+npm run initialize
+
+# --- Create NR monitoring user (used in optional DB challenge) ---
+PGPASSWORD=root psql -h localhost -U postgres -c "
+  DO \$\$
+  BEGIN
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'new_relic') THEN
+      CREATE ROLE new_relic WITH LOGIN PASSWORD 'instruqt';
+      GRANT CONNECT ON DATABASE \"DevRel\" TO new_relic;
+      GRANT pg_monitor TO new_relic;
+    END IF;
+  END
+  \$\$;" 2>/dev/null || true
+
+# --- Install frontend and build static bundle ---
+cd /root/pern-newrelic
+npm run install:frontend
+npm run build:frontend

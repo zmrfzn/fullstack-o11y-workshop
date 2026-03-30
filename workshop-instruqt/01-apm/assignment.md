@@ -1,8 +1,8 @@
 ---
 slug: apm
-id: apm
+id: nbwvyaxrgwhe
 type: challenge
-title: "Challenge 1 — Instrument the Backend with APM"
+title: Challenge 1 — Instrument the Backend with APM
 teaser: One line of code gives you full visibility into your Node.js/Express API.
 notes:
 - type: text
@@ -19,22 +19,22 @@ notes:
 
     This challenge instruments the **Express backend** that powers the tutorials API.
 tabs:
-- id: terminal-1
+- id: dqvgz1yjtqlo
   title: Terminal 1
   type: terminal
   hostname: pern-o11y
   workdir: /root/pern-newrelic/packages/backend
-- id: terminal-2
+- id: lsj6hxgpc6wz
   title: Terminal 2
   type: terminal
   hostname: pern-o11y
   workdir: /root/pern-newrelic/packages/backend
-- id: editor
+- id: kvmzlyh1tgo1
   title: Editor
   type: code
   hostname: pern-o11y
   path: /root/pern-newrelic/packages/backend
-- id: backend-service
+- id: a7qrfuxpmoxg
   title: Backend API
   type: service
   hostname: pern-o11y
@@ -42,10 +42,11 @@ tabs:
   port: 8080
 difficulty: basic
 timelimit: 720
+enhanced_loading: null
 ---
 
 While you were on the loading screen, the environment was automatically set up:
-- Node.js 20 and PostgreSQL installed
+- Node.js 24 and PostgreSQL installed
 - App cloned to `/root/pern-newrelic/`
 - Dependencies installed, database migrated and seeded
 
