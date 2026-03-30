@@ -20,19 +20,12 @@ tabs:
   type: terminal
   hostname: pern-o11y
   workdir: /root/pern-newrelic/packages/backend
-  shell: /bin/bash
-  cmd: npm start
+  cmd: bash -c "npm start"
 - id: zuwsjrhlevag
   title: Terminal
   type: terminal
   hostname: pern-o11y
-  shell: /bin/bash
-- id: x7uidhiauqbk
-  title: Live App
-  type: service
-  hostname: pern-o11y
-  path: /
-  port: 8080
+  cmd: /bin/bash
 difficulty: basic
 timelimit: 600
 enhanced_loading: null
@@ -50,7 +43,7 @@ Run in [button label="Terminal"](tab-1):
 echo http://$HOSTNAME.$_SANDBOX_ID.instruqt.io:8080
 ```
 
-Copy the output — you'll need it in the steps below.
+Copy the output — you'll need it when setting up the monitor below. Open it in a new browser tab to confirm the app is running.
 
 ---
 

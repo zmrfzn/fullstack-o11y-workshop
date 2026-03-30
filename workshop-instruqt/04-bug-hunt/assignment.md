@@ -22,28 +22,21 @@ tabs:
   type: terminal
   hostname: pern-o11y
   workdir: /root/pern-newrelic/packages/backend
-  shell: /bin/bash
-  cmd: npm start
+  cmd: bash -c "npm start"
 - id: yki74poaj6et
   title: Load Terminal
   type: terminal
   hostname: pern-o11y
   workdir: /root/pern-newrelic/packages/backend
-  shell: /bin/bash
-- id: anlb5zxie5c6
-  title: Live App
-  type: service
-  hostname: pern-o11y
-  path: /
-  port: 8080
+  cmd: /bin/bash
 difficulty: basic
 timelimit: 900
 enhanced_loading: null
 ---
 
-> The backend is starting automatically in [button label="Node Terminal"](tab-0). Wait for `Server is running on port 8080` and the app loads in [button label="Live App"](tab-2) before starting the hunt.
+> The backend is starting automatically in [button label="Node Terminal"](tab-0). Wait for `Server is running on port 8080` before starting the hunt.
 
-To open the app in your own browser tab, run in [button label="Load Terminal"](tab-1):
+Get your app URL and open it in a new browser tab:
 
 ```run
 echo http://$HOSTNAME.$_SANDBOX_ID.instruqt.io:8080
@@ -59,7 +52,7 @@ In [button label="Load Terminal"](tab-1), run the load generator to produce enou
 npm run load
 ```
 
-Let it run for **1–2 minutes**, then stop with `ctrl+c`. Also click around the [button label="Live App"](tab-2) — visit Analytics, try the Remove All button.
+Let it run for **1–2 minutes**, then stop with `ctrl+c`. Also click around the app in your browser — visit Analytics, try the Remove All button.
 
 ---
 
@@ -88,7 +81,7 @@ Look at `packages/backend/app/controllers/tutorial.controller.js` — the `findA
 
 **Signal:** APM → Errors
 
-**How to trigger:** In the [button label="Live App"](tab-2), click the **Remove All** button in the tutorial list.
+**How to trigger:** In the app, click the **Remove All** button in the tutorial list.
 
 **Where to look:**
 1. New Relic → **APM & Services** → your app → **Errors**

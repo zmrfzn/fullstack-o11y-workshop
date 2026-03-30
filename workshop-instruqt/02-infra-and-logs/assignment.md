@@ -22,14 +22,13 @@ tabs:
   title: Terminal
   type: terminal
   hostname: pern-o11y
-  shell: /bin/bash
+  cmd: /bin/bash
 - id: ppgn8jvuzesk
   title: Node
   type: terminal
   hostname: pern-o11y
   workdir: /root/pern-newrelic/packages/backend
-  shell: /bin/bash
-  cmd: npm start
+  cmd: bash -c "npm start"
 - id: a8nxrr7usa6i
   title: Config Editor
   type: code
@@ -148,5 +147,7 @@ In New Relic → **APM & Services** → your app → **Distributed Tracing**:
 2. Select the **Logs** tab inside the trace view
 
 You'll see the exact log lines emitted during that request — no manual correlation needed.
+
+![Logs in Context](../assets/logs_in_context.jpg)
 
 > **Checkpoint B ✅** Confirm you can see logs in New Relic Logs before moving to the next challenge.

@@ -24,8 +24,7 @@ tabs:
   type: terminal
   hostname: pern-o11y
   workdir: /root/pern-newrelic/packages/backend
-  shell: /bin/bash
-  cmd: npm start
+  cmd: /bin/bash
 - id: yfpmdw1dxn9a
   title: React Editor
   type: code
@@ -36,23 +35,37 @@ tabs:
   type: terminal
   hostname: pern-o11y
   workdir: /root/pern-newrelic
-  shell: /bin/bash
-- id: ltrjajdvrmpm
-  title: Live App
-  type: service
-  hostname: pern-o11y
-  path: /
-  port: 8080
+  cmd: /bin/bash
 difficulty: basic
 timelimit: 720
 enhanced_loading: null
 ---
 
-> The backend is starting automatically in [button label="Node Terminal"](tab-0). Wait for `Server is running on port 8080`, then open the [button label="Live App"](tab-3) tab to confirm the app loads.
+## Step 1 — Get your app URL
+
+In [button label="Node Terminal"](tab-0), get the public URL for this sandbox:
+
+```run
+echo http://$HOSTNAME.$_SANDBOX_ID.instruqt.io:8080
+```
+
+Copy the output and **open it in a new browser tab**. The app is not running yet — we'll start it in the next step.
 
 ---
 
-## Step 1 — Get the Browser agent snippet
+## Step 2 — Start the backend
+
+In [button label="Node Terminal"](tab-0):
+
+```run
+cd /root/pern-newrelic/packages/backend && npm start
+```
+
+Switch to your browser tab and refresh. You should see the tutorials app load.
+
+---
+
+## Step 3 — Get the Browser agent snippet
 
 In New Relic:
 
@@ -64,7 +77,7 @@ In New Relic:
 
 ---
 
-## Step 2 — Add the snippet to index.html
+## Step 4 — Add the snippet to index.html
 
 Open [button label="React Editor"](tab-1) and navigate to `index.html`.
 
@@ -82,25 +95,23 @@ Save the file.
 
 ---
 
-## Step 3 — Rebuild and restart
-
-The React app is served as a pre-built bundle. Rebuild it so the snippet is included, then restart the backend.
+## Step 5 — Rebuild and restart
 
 In [button label="Terminal"](tab-2):
 
 ```run
-npm run build:frontend
+cd /root/pern-newrelic && npm run build:frontend
 ```
 
 In [button label="Node Terminal"](tab-0), click the **reload icon (↺)** at the top-right of the terminal to restart the server.
 
-> Using the reload icon restarts the terminal's auto-start command. Do not use `ctrl+c` as it may not respond in all cases.
+> The reload icon restarts the terminal's shell. Do not use `ctrl+c`.
 
 ---
 
-## Step 4 — Generate traffic
+## Step 6 — Generate traffic
 
-Open the [button label="Live App"](tab-3) tab and interact with the app:
+Refresh your browser tab (the URL from Step 1) and interact with the app:
 - Browse the tutorial list
 - Click into a tutorial
 - Visit the **Analytics** page
@@ -108,7 +119,7 @@ Open the [button label="Live App"](tab-3) tab and interact with the app:
 
 ---
 
-## Step 5 — Verify Browser data in New Relic
+## Step 7 — Verify Browser data in New Relic
 
 Go to **New Relic → Browser** and select your app.
 
