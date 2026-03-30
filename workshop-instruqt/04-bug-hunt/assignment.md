@@ -23,6 +23,12 @@ tabs:
   hostname: pern-o11y
   workdir: /root/pern-newrelic/packages/backend
   cmd: bash -c "npm start"
+- id: frontendterm
+  title: Frontend Terminal
+  type: terminal
+  hostname: pern-o11y
+  workdir: /root/pern-newrelic/packages/frontend
+  cmd: bash -c "npm start"
 - id: yki74poaj6et
   title: Load Terminal
   type: terminal
@@ -34,19 +40,21 @@ timelimit: 900
 enhanced_loading: null
 ---
 
-> The backend is starting automatically in [button label="Node Terminal"](tab-0). Wait for `Server is running on port 8080` before starting the hunt.
+> Both the backend and frontend are starting automatically.
+> - [button label="Node Terminal"](tab-0): wait for `Server is running on port 8080`
+> - [button label="Frontend Terminal"](tab-1): wait for `ready in Xms`
 
-Get your app URL and open it in a new browser tab:
+Get your app URL and open it in a **new browser tab**:
 
 ```run
-echo http://$HOSTNAME.$_SANDBOX_ID.instruqt.io:8080
+echo http://$HOSTNAME.$_SANDBOX_ID.instruqt.io:3000
 ```
 
 ---
 
 ## Generate traffic first
 
-In [button label="Load Terminal"](tab-1), run the load generator to produce enough data for all three bugs to surface:
+In [button label="Load Terminal"](tab-2), run the load generator to produce enough data for all three bugs to surface:
 
 ```run
 npm run load

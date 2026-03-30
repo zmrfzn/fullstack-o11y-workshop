@@ -16,56 +16,48 @@ notes:
     - Session traces — a timeline of everything that happened in a user's browser
 
     You add the New Relic Browser agent by pasting a JavaScript snippet into your app's `<head>`. That's it.
-
-    The React frontend is pre-built and served directly from the Node.js server on port 8080 — no separate process needed.
 tabs:
 - id: gteftsmnwvou
   title: Node Terminal
   type: terminal
   hostname: pern-o11y
   workdir: /root/pern-newrelic/packages/backend
-  cmd: /bin/bash
+  cmd: bash -c "npm start"
+- id: frontendterm
+  title: Frontend Terminal
+  type: terminal
+  hostname: pern-o11y
+  workdir: /root/pern-newrelic/packages/frontend
+  cmd: bash -c "npm start"
 - id: yfpmdw1dxn9a
   title: React Editor
   type: code
   hostname: pern-o11y
   path: /root/pern-newrelic/packages/frontend
-- id: ri3vxavghkry
-  title: Terminal
-  type: terminal
-  hostname: pern-o11y
-  workdir: /root/pern-newrelic
-  cmd: /bin/bash
 difficulty: basic
 timelimit: 720
 enhanced_loading: null
 ---
 
-## Step 1 — Get your app URL
-
-In [button label="Node Terminal"](tab-0), get the public URL for this sandbox:
-
-```run
-echo http://$HOSTNAME.$_SANDBOX_ID.instruqt.io:8080
-```
-
-Copy the output and **open it in a new browser tab**. The app is not running yet — we'll start it in the next step.
+> Both the backend and frontend are starting automatically.
+> - [button label="Node Terminal"](tab-0): wait for `Server is running on port 8080`
+> - [button label="Frontend Terminal"](tab-1): wait for `ready in Xms`
 
 ---
 
-## Step 2 — Start the backend
+## Step 1 — Open the app
 
-In [button label="Node Terminal"](tab-0):
+Get your app URL and open it in a **new browser tab**:
 
 ```run
-cd /root/pern-newrelic/packages/backend && npm start
+echo http://$HOSTNAME.$_SANDBOX_ID.instruqt.io:3000
 ```
 
-Switch to your browser tab and refresh. You should see the tutorials app load.
+You should see the tutorials app running.
 
 ---
 
-## Step 3 — Get the Browser agent snippet
+## Step 2 — Get the Browser agent snippet
 
 In New Relic:
 
@@ -77,9 +69,9 @@ In New Relic:
 
 ---
 
-## Step 4 — Add the snippet to index.html
+## Step 3 — Add the snippet to index.html
 
-Open [button label="React Editor"](tab-1) and navigate to `index.html`.
+Open [button label="React Editor"](tab-2) and navigate to `index.html`.
 
 Paste the snippet inside the `<head>` section, as the **first child** before any other tags:
 
@@ -91,27 +83,13 @@ Paste the snippet inside the `<head>` section, as the **first child** before any
 </head>
 ```
 
-Save the file.
+Save the file. Vite will automatically reload — **refresh your browser tab** to pick up the change.
 
 ---
 
-## Step 5 — Rebuild and restart
+## Step 4 — Generate traffic
 
-In [button label="Terminal"](tab-2):
-
-```run
-cd /root/pern-newrelic && npm run build:frontend
-```
-
-In [button label="Node Terminal"](tab-0), click the **reload icon (↺)** at the top-right of the terminal to restart the server.
-
-> The reload icon restarts the terminal's shell. Do not use `ctrl+c`.
-
----
-
-## Step 6 — Generate traffic
-
-Refresh your browser tab (the URL from Step 1) and interact with the app:
+In your browser tab, interact with the app:
 - Browse the tutorial list
 - Click into a tutorial
 - Visit the **Analytics** page
@@ -119,7 +97,7 @@ Refresh your browser tab (the URL from Step 1) and interact with the app:
 
 ---
 
-## Step 7 — Verify Browser data in New Relic
+## Step 5 — Verify Browser data in New Relic
 
 Go to **New Relic → Browser** and select your app.
 

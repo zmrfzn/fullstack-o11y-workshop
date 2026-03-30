@@ -21,6 +21,12 @@ tabs:
   hostname: pern-o11y
   workdir: /root/pern-newrelic/packages/backend
   cmd: bash -c "npm start"
+- id: frontendterm
+  title: Frontend Terminal
+  type: terminal
+  hostname: pern-o11y
+  workdir: /root/pern-newrelic/packages/frontend
+  cmd: bash -c "npm start"
 - id: zuwsjrhlevag
   title: Terminal
   type: terminal
@@ -31,19 +37,21 @@ timelimit: 600
 enhanced_loading: null
 ---
 
-> The backend is starting automatically in [button label="Node Terminal"](tab-0). Wait for `Server is running on port 8080` before setting up monitors.
+> Both the backend and frontend are starting automatically.
+> - [button label="Node Terminal"](tab-0): wait for `Server is running on port 8080`
+> - [button label="Frontend Terminal"](tab-1): wait for `ready in Xms`
 
 ---
 
 ## Get your app URL
 
-Run in [button label="Terminal"](tab-1):
+Run in [button label="Terminal"](tab-2):
 
 ```run
-echo http://$HOSTNAME.$_SANDBOX_ID.instruqt.io:8080
+echo http://$HOSTNAME.$_SANDBOX_ID.instruqt.io:3000
 ```
 
-Copy the output — you'll need it when setting up the monitor below. Open it in a new browser tab to confirm the app is running.
+Copy the output and open it in a new browser tab to confirm the app is running. You'll need this URL for the monitor below.
 
 ---
 
