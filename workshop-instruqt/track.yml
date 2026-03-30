@@ -1,0 +1,53 @@
+slug: pern-o11y-quickstart
+id: pern-o11y-quickstart
+title: "Full Stack Observability with New Relic"
+teaser: Instrument a PERN stack app end-to-end and hunt down real bugs using telemetry.
+description: |-
+  ## What you'll learn
+
+  In this hands-on workshop you will take a working full-stack application (PostgreSQL, Express, React, Node.js) and instrument it with New Relic from the ground up — one layer at a time.
+
+  By the end you will have all four observability pillars active and will use them together to find and diagnose real bugs hidden in the app.
+
+  ## Challenges
+
+  1. **APM** — Instrument the Node.js/Express backend. See every transaction, error, and dependency automatically.
+  2. **Infrastructure + Logs** — Install the Infrastructure agent via guided install. Add log forwarding and see Logs-in-Context linking your logs to traces.
+  3. **Browser RUM** — Add the JavaScript snippet to the React frontend. See page loads, JS errors, and AJAX calls from the user's perspective.
+  4. **Bug Hunt** — Use APM, Browser, and Logs together to find three real bugs deliberately hidden in the app.
+  5. **Synthetics** *(bonus)* — Set up a proactive uptime monitor so you are never caught off guard again.
+
+  ## Requirements
+
+  * A free [New Relic account](https://newrelic.com/signup?utm_source=instruqt-labs).
+
+  ## Note
+
+  This is an ephemeral environment. Complete the workshop in one sitting.
+
+  ### Created by the New Relic Developer Relations team.
+icon: https://newrelic.com/themes/custom/erno/assets/mediakit/new_relic_logo_vertical.png
+tags:
+  - apm
+  - infrastructure
+  - logs
+  - browser
+  - synthetics
+  - javascript
+  - fullstack-o11y
+  - bug-hunt
+owner: newrelic
+developers:
+  - zfouzan@newrelic.com
+show_timer: true
+idle_timeout: 1200
+timelimit: 4200
+lab_config:
+  extend_ttl: 900
+  sidebar_enabled: true
+  feedback_recap_enabled: true
+  feedback_tab_enabled: false
+  loadingMessages: true
+  default_layout: AssignmentRight
+  default_layout_sidebar_size: 33
+  hideStopButton: false
