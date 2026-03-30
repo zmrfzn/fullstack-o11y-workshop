@@ -9,8 +9,6 @@ const MainLayout = ({ children }) => {
   const navItems = [
     { path: '/tutorials', icon: 'pi pi-list', label: 'Tutorials' },
     { path: '/add', icon: 'pi pi-plus', label: 'Add Tutorial' },
-    { path: '/published', icon: 'pi pi-check-circle', label: 'Published' },
-    { path: '/dashboard', icon: 'pi pi-chart-bar', label: 'Dashboard' },
     { path: '/analytics', icon: 'pi pi-chart-line', label: 'Analytics' }
   ];
 

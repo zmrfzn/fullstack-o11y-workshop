@@ -19,10 +19,7 @@ import ErrorFallback from './components/common/ErrorFallback';
 const TutorialsList = lazy(() => import("./components/TutorialsList"));
 const AddTutorial = lazy(() => import("./components/AddTutorial"));
 const Tutorial = lazy(() => import("./components/Tutorial"));
-const TutorialView = lazy(() => import("./components/TutorialView"));
-const Published = lazy(() => import("./components/Published"));
 const PageNotFound = lazy(() => import("./components/PageNotFound"));
-const Dashboard = lazy(() => import("./components/Dashboard"));
 const Analytics = lazy(() => import("./components/Analytics"));
 
 function App() {
@@ -36,11 +33,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/tutorials" replace />} />
             <Route path="/tutorials" element={<TutorialsList />} />
-            <Route path="/published" element={<Published />} />
             <Route path="/add" element={<AddTutorial />} />
             <Route path="/tutorials/:id" element={<Tutorial />} />
-            <Route path="/view/:id" element={<TutorialView />} />
-            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/404/:id" element={<PageNotFound />}/>
             <Route path="*" element={<PageNotFound />}/>

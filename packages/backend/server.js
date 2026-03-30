@@ -75,8 +75,6 @@ app.get("/", (req, res) => {
 });
 
 require("./app/routes/tutorial.routes")(app);
-const weather = require("./app/routes/weather.routes");
-app.use("/api/weather", weather);
 
 // Serve React frontend (production build — used in Instruqt and production)
 // In dev (Codespaces), the Vite dev server runs separately on port 3000.
