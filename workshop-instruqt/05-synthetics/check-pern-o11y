@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Synthetics monitors are created in the New Relic UI and cannot be
+# verified from within the VM. Always pass.
+echo "Synthetics monitors are managed in New Relic UI. Well done completing the workshop!"
+exit 0

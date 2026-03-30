@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Check 1: license key has been set (not the default placeholder)
+if grep -q "YOUR_LICENSE_KEY" /root/pern-newrelic/packages/backend/newrelic.js; then
+  echo "License key not configured. Open newrelic.js and replace YOUR_LICENSE_KEY with your New Relic Ingest License key."
+  exit 1
+fi
+
+# Check 2: require('newrelic') is present at the top of server.js
+if ! head -5 /root/pern-newrelic/packages/backend/server.js | grep -q "require('newrelic')"; then
+  echo "require('newrelic') not found at the top of server.js. Add it as the very first line."
+  exit 1
+fi
+
+# Check 3: backend is running and responding
+if ! curl -sf http://localhost:8080/api/tutorials > /dev/null 2>&1; then
+  echo "Backend is not running on port 8080. Start it with: npm run start:nr"
+  exit 1
+fi
+
+echo "APM configured correctly. Backend is running with the New Relic agent."
+exit 0

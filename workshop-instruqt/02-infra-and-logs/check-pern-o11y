@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Check 1: Infrastructure agent service is active
+if ! systemctl is-active --quiet newrelic-infra; then
+  echo "newrelic-infra service is not running. Complete the guided install and verify with: systemctl status newrelic-infra"
+  exit 1
+fi
+
+# Check 2: Log forwarding config file exists and has content
+if [ ! -f /etc/newrelic-infra/logging.d/app-logs.yml ]; then
+  echo "Log forwarding config not found. Create /etc/newrelic-infra/logging.d/app-logs.yml with your log file path."
+  exit 1
+fi
+
+if ! grep -q "file:" /etc/newrelic-infra/logging.d/app-logs.yml; then
+  echo "Log forwarding config exists but is missing a 'file:' entry. Add the path to your log file."
+  exit 1
+fi
+
+echo "Infrastructure agent is running and log forwarding is configured."
+exit 0

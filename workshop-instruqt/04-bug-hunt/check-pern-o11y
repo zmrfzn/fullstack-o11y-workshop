@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Check: app is running and API is reachable
+# (Bug hunt itself is verified in New Relic UI — unverifiable from the VM)
+if ! curl -sf http://localhost:8080/api/tutorials > /dev/null 2>&1; then
+  echo "App is not running on port 8080. Start the backend with: npm run start:nr"
+  exit 1
+fi
+
+echo "App is running. Move on when you have identified the root cause of at least two bugs."
+exit 0

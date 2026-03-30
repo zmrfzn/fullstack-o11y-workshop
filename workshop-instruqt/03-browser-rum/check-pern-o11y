@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Check 1: NR Browser snippet present in index.html source
+# The snippet always contains the NREUM loader marker
+if ! grep -q "NREUM" /root/pern-newrelic/packages/frontend/index.html 2>/dev/null; then
+  echo "New Relic Browser snippet not found in packages/frontend/index.html. Paste the snippet from New Relic into the <head> section."
+  exit 1
+fi
+
+# Check 2: Frontend has been rebuilt with the snippet (dist must exist and contain NREUM)
+if ! grep -q "NREUM" /root/pern-newrelic/packages/frontend/dist/index.html 2>/dev/null; then
+  echo "Browser snippet found in source but the frontend has not been rebuilt. Run: npm run build:frontend"
+  exit 1
+fi
+
+# Check 3: Backend is serving the app
+if ! curl -sf http://localhost:8080 > /dev/null 2>&1; then
+  echo "Backend is not running on port 8080. Restart it with: npm run start:nr"
+  exit 1
+fi
+
+echo "Browser agent snippet is in place and the frontend has been rebuilt."
+exit 0
